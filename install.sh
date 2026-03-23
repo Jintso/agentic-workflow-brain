@@ -44,7 +44,7 @@ for cmd_file in "$COMMANDS_SRC"/*.md; do
         filename="$(basename "$cmd_file")"
         cp "$cmd_file" "$COMMANDS_DIR/$filename"
         echo "  ✅ /$(basename "$filename" .md)"
-        ((INSTALLED++))
+        INSTALLED=$((INSTALLED + 1))
     fi
 done
 

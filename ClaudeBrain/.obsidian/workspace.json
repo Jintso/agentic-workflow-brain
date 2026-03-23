@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "29313d0f2b255cc8",
+        "id": "e0d1f87228a0e917",
         "type": "tabs",
         "children": [
           {
-            "id": "4692949bee4fb02f",
+            "id": "d872e242f47cb01c",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "AI Links.md",
+                "file": "Execution-Plan.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "AI Links"
+              "title": "Execution-Plan"
             }
           }
         ]
@@ -183,10 +183,25 @@
       "bases:Create new base": false
     }
   },
-  "active": "4692949bee4fb02f",
+  "active": "d872e242f47cb01c",
   "lastOpenFiles": [
-    "Do Work.md",
-    "Home Network.md",
-    "AI Links.md"
+    "Handoffs/Handoffs.md.tmp.79953.1774246108237",
+    "Handoffs/handoff-001.md",
+    "Handoffs/handoff-001.md.tmp.79953.1774246104204",
+    "Execution-Plan.md.tmp.79953.1774245878967",
+    "Execution-Plan.md.tmp.79953.1774231744320",
+    "Execution-Plan.md.tmp.79953.1774231733286",
+    "Execution-Plan.md.tmp.79953.1774231732738",
+    "Execution-Plan.md.tmp.79953.1774231728162",
+    "Execution-Plan.md.tmp.79953.1774231440963",
+    "Execution-Plan.md.tmp.79953.1774231437624",
+    "Execution-Plan.md.tmp.79953.1774231057372",
+    "Execution-Plan.md.tmp.79953.1774231052589",
+    "CLAUDE.md",
+    "BRAIN-INDEX.md",
+    "Execution-Plan.md",
+    "Notes/Home Network.md",
+    "Notes/Do Work.md",
+    "Notes/AI Links.md"
   ]
 }
