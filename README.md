@@ -69,6 +69,22 @@ cd ~/brain
 claude --add-dir ~/code/addon-manager
 ```
 
+**Shorter start command.** Typing that every session gets old. Add one shell alias per product so a session is one word away:
+
+```bash
+# bash / zsh (~/.bashrc or ~/.zshrc)
+alias brain-addons='cd ~/brain && claude --add-dir ~/code/addon-manager'
+alias brain-shop='cd ~/brain && claude --add-dir ~/code/webshop'
+```
+
+```fish
+# fish (~/.config/fish/config.fish)
+alias brain-addons 'cd ~/brain && claude --add-dir ~/code/addon-manager'
+alias brain-shop 'cd ~/brain && claude --add-dir ~/code/webshop'
+```
+
+Then `brain-addons` opens Claude in the brain with that product's code attached, and `/resume addon-manager` is the first thing you type.
+
 **Inside a code repository.** Run `./install.sh .` at the repo root. The brain files sit next to the code, and `claude` started from the root sees both. Use this for a single product whose code and brain should travel together.
 
 ## Daily Workflow
