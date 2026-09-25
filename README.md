@@ -146,7 +146,7 @@ scripts/check-links.sh ~/brain    # or point it somewhere
 
 It scans `BRAIN-INDEX.md`, `company/` and `products/` and reports broken links, leftover wikilinks, files without a parent line, orphans nothing links to, and cross-product links. Exit code 1 on issues, so it works as a pre-commit hook or CI step for the brain repo. `/sync` and `/wrap-up` run it for you.
 
-## Migrating From obsidian-brain
+## Migrating From previous version, obsidian-brain
 
 If you have a vault from the original single-product version (numbered `00_Company/` folders, wikilinks), install this into a new directory and run:
 
