@@ -1,31 +1,30 @@
 # /plan — Break a Step Into Concrete Tasks
 
-You are creating a detailed implementation plan for a specific execution plan step.
+You are creating a detailed implementation plan for one step of a product's execution plan.
 
 ## Input
 
-The user will specify which step to plan, either by:
-- Name: `/plan authentication system`
-- Step number: `/plan 2.3`
-- Description: `/plan the API routes step`
+- `/plan 2.3`
+- `/plan authentication system`
+- `/plan addon-manager 2.3` (leading token names the product)
 
-If ambiguous, read `Execution-Plan.md` and ask the user to clarify which step they mean.
+Resolve the product per the Product Resolution rule in `CLAUDE.md`. If the step is ambiguous, read `products/<slug>/Execution-Plan.md` and ask the user which step they mean.
 
 ## Process
 
-1. **Read context:** Load `Execution-Plan.md`, `[[Architecture]]`, `[[Tech-Stack]]`, `[[Conventions]]`, and any files relevant to this step.
+1. **Read context:** `products/<slug>/Execution-Plan.md`, `engineering/Architecture.md`, `engineering/Tech-Stack.md`, `engineering/Conventions.md`, and any files relevant to this step. If the code is accessible, look at what already exists before planning new work.
 
 2. **Generate the plan** with this structure:
 
-```markdown
-> Part of [[Execution-Plan]]
+````markdown
+> Part of [Execution Plan](../Execution-Plan.md)
 
 # Implementation Plan: [Step Name]
 
-**Step:** [X.Y from execution plan]
+**Step:** [X.Y from the execution plan]
 **Phase:** [Phase name]
 **Effort Estimate:** [S/M/L/XL] → [Revised estimate if different after analysis]
-**Dependencies:** [List with status — completed/in_progress/blocked]
+**Dependencies:** [List with status: completed / in_progress / blocked]
 **Blocks:** [What this step unblocks once done]
 
 ## Overview
@@ -35,16 +34,13 @@ If ambiguous, read `Execution-Plan.md` and ask the user to clarify which step th
 
 ### Task 1: [Name]
 - **Effort:** S/M/L
-- **Files:** [files to create or modify]
+- **Files:** [code files to create or modify, in backticks]
 - **Description:** [What to do, concretely]
 - **Acceptance criteria:**
   - [ ] [Testable condition 1]
   - [ ] [Testable condition 2]
 
 ### Task 2: [Name]
-[Same format]
-
-### Task 3: [Name]
 [Same format]
 
 [...continue for all tasks]
@@ -59,28 +55,28 @@ Task 4 (independent)
 
 ## Technical Notes
 - [Key technical decisions or constraints]
-- [Libraries/tools needed]
-- [Patterns to follow from [[Conventions]]]
+- [Libraries or tools needed]
+- [Patterns to follow from [Conventions](Conventions.md)]
 - [Risks or unknowns]
 
 ## Definition of Done
 - [ ] All tasks completed
-- [ ] [Integration test / manual verification]
-- [ ] Brain files updated ([[Architecture]], [[Tech-Stack]], etc.)
-- [ ] Execution plan step marked as `completed`
-```
+- [ ] [Integration test or manual verification]
+- [ ] Brain files updated ([Architecture](Architecture.md), [Tech Stack](Tech-Stack.md), etc.)
+- [ ] Execution plan step marked `completed`
+````
 
-3. **Save the plan** to the relevant department folder (usually `01_Engineering/`) with a descriptive filename like `Plan-Authentication.md`.
+3. **Save the plan** to `products/<slug>/engineering/Plan-[Step-Name].md`.
 
-4. **Update the execution plan step** in `Execution-Plan.md` to include the detailed tasks from this plan (replace any placeholder tasks).
+4. **Update the step** in `products/<slug>/Execution-Plan.md` with the detailed tasks from this plan, replacing any placeholder tasks. Link the plan file from the step: `- **Plan:** [Plan-Name](engineering/Plan-Name.md)`.
 
-5. **Link it** — add the plan file to the relevant folder index and ensure the `> Part of` backlink exists.
+5. **Link it** from `engineering/README.md` and run `scripts/check-links.sh`.
 
 ## Output
 
 Show the user:
 1. The full plan
-2. Recommended task order (what to start with)
+2. Recommended task order
 3. Estimated total effort
 4. Parallel opportunities
-5. Suggest: "Ready to start? Pick a task and let's go."
+5. "Ready to start? Pick a task and let's go."

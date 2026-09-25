@@ -1,8 +1,8 @@
-> Part of [[ADR]]
+> Part of [ADR](README.md)
 
 # ADR-NNN: [Title]
 
-**Date:** [date]
+**Date:** YYYY-MM-DD
 **Status:** proposed | accepted | deprecated | superseded
 **Superseded by:** [ADR-XXX if applicable]
 
@@ -22,5 +22,5 @@
 - **Risks:** [What could go wrong]
 
 ## Related
-- [[Architecture]]
-- [[Tech-Stack]]
+- [Architecture](../Architecture.md)
+- [Tech Stack](../Tech-Stack.md)

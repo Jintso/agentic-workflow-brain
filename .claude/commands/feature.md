@@ -1,26 +1,22 @@
 # /feature — Plan and Implement a New Feature
 
-You are helping the user plan, spec, and implement a new feature from scratch. This command handles the full lifecycle: spec → plan → execute → update brain.
+You are helping the user plan, spec and implement a new feature from scratch. This command handles the full lifecycle: spec → plan → execute → update brain.
 
 ## Input
 
-The user specifies a feature:
 - `/feature user authentication`
-- `/feature real-time notifications`
-- `/feature dark mode support`
+- `/feature addon-manager real-time notifications` (leading token names the product)
 
-If the description is vague, ask 2-3 clarifying questions before proceeding.
+Resolve the product per the Product Resolution rule in `CLAUDE.md`. If the description is vague, ask 2–3 clarifying questions before proceeding.
 
 ## Phase 1: Feature Spec
 
-Read context from `[[Architecture]]`, `[[Tech-Stack]]`, `[[MVP-Scope]]`, `[[Feature-Priorities]]`, and `[[Conventions]]`.
+Read `products/<slug>/MVP-Scope.md`, `Feature-Priorities.md`, `User-Stories.md`, and `products/<slug>/engineering/Architecture.md`, `Tech-Stack.md`, `Conventions.md`. If the code is accessible, check what already exists.
 
-Create a feature spec file:
-
-**Filename:** `02_Product/Feature-[Name].md`
+Create `products/<slug>/features/Feature-[Name].md` from `templates/Feature-Spec-Template.md`:
 
 ```markdown
-> Part of [[Product]]
+> Part of [Features](README.md)
 
 # Feature: [Name]
 
@@ -34,91 +30,83 @@ Create a feature spec file:
 
 ## User Stories
 - As a [user type], I want to [action] so that [benefit]
-- As a [user type], I want to [action] so that [benefit]
-- [Add more as needed]
 
 ## Requirements
 ### Must Have
-- [Requirement 1]
-- [Requirement 2]
+- [Requirement]
 
 ### Nice to Have
-- [Requirement 3]
+- [Requirement]
 
 ### Out of Scope
 - [Explicitly excluded items]
 
 ## Technical Approach
-- **Architecture impact:** [How this fits into [[Architecture]]]
+- **Architecture impact:** [How this fits into [Architecture](../engineering/Architecture.md)]
 - **Key components:** [What needs to be built]
 - **Data model changes:** [If any]
 - **API changes:** [If any]
 - **Dependencies:** [External libraries, services]
 
 ## UI/UX Notes
-- [Interaction patterns]
-- [Key screens or flows]
+- [Interaction patterns, key screens or flows]
 
-## Testing Strategy
-- [Unit tests]
-- [Integration tests]
-- [Manual verification steps]
-
-## Related
-- [[Architecture]]
-- [[Tech-Stack]]
-- [Other related brain files]
-```
-
-## Phase 2: Implementation Plan
-
-Break the feature into ordered tasks (same format as `/plan`):
-
-```markdown
 ## Implementation Tasks
 
 ### Task 1: [Name] (S/M/L)
-- Files: [list]
+- Files: [code files, in backticks]
 - What: [concrete description]
 - Done when: [acceptance criteria]
 
 ### Task 2: [Name] (S/M/L)
 [...]
+
+Dependency graph:
+```
+Task 1 ──→ Task 3
+Task 2 (independent)
 ```
 
-Include a dependency graph showing parallel opportunities.
+## Testing Strategy
+- [Unit tests, integration tests, manual verification steps]
 
-## Phase 3: Integrate With Execution Plan
+## Related
+- [Architecture](../engineering/Architecture.md)
+- [Tech Stack](../engineering/Tech-Stack.md)
+- [Feature Priorities](../Feature-Priorities.md)
+- [User Stories](../User-Stories.md)
+```
 
-1. **Add the feature to `Execution-Plan.md`** as a new step (or set of steps) in the appropriate phase
-2. **Link the feature spec** from `[[Feature-Priorities]]` and `[[Product]]` index
-3. **Add the `> Part of [[Product]]`** backlink in the feature spec
-4. **Update `BRAIN-INDEX.md`** if this is a major feature
+## Phase 2: Integrate With the Execution Plan
 
-## Phase 4: Guide Implementation
+1. Add the feature to `products/<slug>/Execution-Plan.md` as a new step (or steps) in the appropriate phase, linking the spec: `- **Spec:** [Feature-Name](features/Feature-Name.md)`
+2. Link the spec from `features/README.md` and `Feature-Priorities.md`
+3. Run `scripts/check-links.sh`
 
-After the spec and plan are created, ask the user:
+## Phase 3: Guide Implementation
 
-"Feature spec and implementation plan are ready. You can review them in Obsidian. Want to start on Task 1 now?"
+Ask: "Spec and plan are ready at `products/<slug>/features/Feature-[Name].md`. Want to start on Task 1 now?"
 
-If they say yes, begin implementing. As you work:
-- Check off tasks as they're completed
-- Update the feature spec status field
-- Note any deviations from the plan
-- Cross-reference with `[[Conventions]]` for code style
+If the code lives outside this directory and isn't accessible, say so and give the `claude --add-dir <path>` command before continuing.
 
-## Phase 5: Completion
+As you work:
+- Check off tasks as they complete
+- Update the spec's status field
+- Note deviations from the plan in the spec
+- Follow `engineering/Conventions.md`
+
+## Phase 4: Completion
 
 When all tasks are done:
-1. Update the feature spec status to `completed`
-2. Update the execution plan step to `completed`
-3. Update `[[Architecture]]` if the architecture changed
-4. Create an ADR in `01_Engineering/ADR/` if significant technical decisions were made
-5. Suggest running `/wrap-up` to capture the session
+1. Set the spec status to `completed`
+2. Mark the execution plan step `completed`
+3. Update `engineering/Architecture.md` if the architecture changed
+4. Create an ADR in `engineering/adr/` if significant technical decisions were made, and list it in `engineering/adr/README.md`
+5. Suggest `/wrap-up`
 
 ## Important Behaviors
 
-- **Scope check:** If the feature seems too large for one session, say so and suggest breaking it into a multi-session effort
-- **Convention adherence:** Follow patterns from `[[Conventions]]` and `[[Tech-Stack]]`
-- **Existing code awareness:** Check what already exists before planning new work
-- **Cross-linking:** Make sure the feature spec links to and from all relevant brain files
+- **Scope check:** if the feature is too large for one session, say so and break it into a multi-session effort.
+- **Convention adherence:** follow `engineering/Conventions.md` and `engineering/Tech-Stack.md`.
+- **Existing code awareness:** check what exists before planning new work.
+- **Cross-linking:** the spec links to and from every relevant brain file.

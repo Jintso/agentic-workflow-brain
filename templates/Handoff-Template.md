@@ -1,8 +1,8 @@
-> Part of [[Handoffs]]
+> Part of [Handoffs](README.md)
 
 # Session Handoff — NNN
 
-**Date:** [date]
+**Date:** YYYY-MM-DD
 **Duration:** [approximate]
 **Focus:** [one-line summary]
 
@@ -13,7 +13,10 @@
 ## Files Changed
 | File | Action | Notes |
 |------|--------|-------|
-| [[filename]] | created/modified | brief note |
+| [Architecture](../engineering/Architecture.md) | modified | brief note |
+| `src/main.rs` | created | brief note |
+
+Brain files get a relative link. Code files get backticks, no link.
 
 ## Decisions Made
 - **[Decision]:** [Rationale]. Alternatives considered: [X, Y].
@@ -28,3 +31,5 @@
 1. [First priority]
 2. [Second priority]
 3. [Third priority]
+
+**Suggested command:** `/resume <slug>`

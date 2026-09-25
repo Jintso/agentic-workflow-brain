@@ -1,26 +1,52 @@
-# /status — Full Project Health Dashboard
+# /status — Project Health Dashboard
 
-You are generating a comprehensive project health dashboard. Read the brain files and present a clear overview of everything.
+You are generating a health dashboard from the brain. Three modes:
+
+| Invocation | Output |
+|------------|--------|
+| `/status` | One product in the brain → product dashboard. Several → portfolio dashboard, then offer a product dashboard. |
+| `/status <slug>` | Product dashboard for that product |
+| `/status all` | Portfolio dashboard followed by a product dashboard for every product |
 
 ## Data Collection
 
-Read these files:
-1. **BRAIN-INDEX.md**
-2. **Execution-Plan.md**
-3. **All handoff files** in `Handoffs/`
-4. **All folder indexes** (Company.md, Engineering.md, Product.md, Operations.md)
-5. **CLAUDE.md**
+**Portfolio:** `BRAIN-INDEX.md`, `products/README.md`, and for each product its `README.md`, `Execution-Plan.md` and latest handoff. Run `scripts/check-links.sh`.
 
-## Dashboard Output
+**Product:** that product's `README.md`, `Execution-Plan.md`, every file in `handoffs/`, the product-level docs (`MVP-Scope.md`, `Feature-Priorities.md`, `User-Stories.md`), and the folder READMEs (`features/`, `engineering/`, `operations/`, `handoffs/`).
 
-### 🏗️ Project: [Name]
+## Portfolio Dashboard
+
+### 🏢 [Organisation Name]
 [One-line description from BRAIN-INDEX]
+
+---
+
+### 📦 Products
+
+| Product | Status | Phase | Progress | In progress | Blocked | Last session |
+|---------|--------|-------|----------|-------------|---------|--------------|
+| [Name] | active | 2 — Core Build | 46% (7/15) | 2 | 0 | 2026-09-20 |
+
+Flag underneath:
+- `active` products with no handoff in the last 30 days
+- Products with any `blocked` step
+- Products whose row in `products/README.md` disagrees with their own `README.md`
+
+### 📁 Brain Health
+Summarise `scripts/check-links.sh`: files, links, and the count of each issue type. If clean: "Brain looks healthy."
+
+### 💡 Recommendations
+Three concrete next actions across the portfolio, each with a one-line why. If the brain has structural issues, recommend `/sync` first.
+
+## Product Dashboard
+
+### 🏗️ [Product Name]
+[One-line description] — **Status:** [status] — **Code:** [location]
 
 ---
 
 ### 📊 Execution Plan Progress
 
-Show each phase:
 ```
 Phase 1: [Name]     [========--]  80%  (4/5)   ← in_progress
 Phase 2: [Name]     [===-------]  30%  (3/10)  ← in_progress
@@ -30,46 +56,42 @@ Overall:            [=====-----]  46%  (7/15)
 ```
 
 ### 🔄 In Progress
-List all steps currently `in_progress`:
-- Step X.Y: [Name] — [X/Y tasks done] — [brief note on what remains]
+- Step X.Y: [Name] — [X/Y tasks done] — [what remains]
 
 ### 🚫 Blocked
-List all `blocked` steps:
 - Step X.Y: [Name] — Blocked by: [reason]
 
 ### ✅ Recently Completed
-List steps completed in the last 3 handoffs:
+Steps completed in the last 3 handoffs:
 - Step X.Y: [Name] — Completed in session [N]
 
 ### 🔓 Ready to Start
-List `not_started` steps whose dependencies are all met, ranked by impact:
+`not_started` steps whose dependencies are all met, ranked by impact:
 - Step X.Y: [Name] — Effort: [S/M/L/XL] — Unblocks: [list or "nothing"]
 
 ---
 
 ### 📁 Brain Health
 
-| Department | Files | Status |
-|-----------|-------|--------|
-| 00_Company | [count] | [healthy/needs-update/sparse] |
-| 01_Engineering | [count] | [healthy/needs-update/sparse] |
-| 02_Product | [count] | [healthy/needs-update/sparse] |
-| 03_Operations | [count] | [healthy/needs-update/sparse] |
-| Handoffs | [count] | [up-to-date/stale] |
-| Templates | [count] | — |
+| Folder | Files | Status |
+|--------|-------|--------|
+| product docs (root) | [count] | [healthy / needs-update / sparse] |
+| features/ | [count] | [healthy / needs-update / sparse] |
+| engineering/ | [count] | [healthy / needs-update / sparse] |
+| operations/ | [count] | [healthy / needs-update / sparse] |
+| handoffs/ | [count] | [up-to-date / stale] |
 
-**Total brain files:** [count]
-**Wikilinks found:** [approximate count of `[[X]]` references across files]
 **Potential issues:**
-- [Orphan files not linked from any index]
-- [Broken wikilinks pointing to non-existent files]
-- [Files with TODO/FIXME/placeholder markers]
-- [If none: "Brain looks healthy."]
+- Findings from `scripts/check-links.sh` that touch this product
+- Files with TODO / FIXME / placeholder markers
+- *Current Status* in the product README out of step with the execution plan
+- If none: "Brain looks healthy."
 
 ---
 
 ### 📅 Session Timeline
-List the last 5 handoffs:
+Last 5 handoffs:
+
 | Session | Date | Focus | Steps Completed |
 |---------|------|-------|-----------------|
 | [N] | [date] | [summary] | [list] |
@@ -80,9 +102,7 @@ List the last 5 handoffs:
 ---
 
 ### 💡 Recommendations
-Based on the current state, suggest 3 concrete next actions:
+Three concrete next actions for this product:
 1. [Highest impact action] — why
 2. [Second priority] — why
-3. [Maintenance/health action if needed] — why
-
-If the brain has health issues (orphans, broken links, stale content), recommend running `/sync` first.
+3. [Maintenance or health action if needed] — why

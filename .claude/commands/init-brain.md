@@ -1,121 +1,66 @@
-# /init-brain — Create a New Project Brain
+# /init-brain — Create a New Brain
 
-You are initializing a persistent project brain inside this Obsidian vault. This brain will serve as your long-term memory across sessions — storing architecture decisions, execution plans, session handoffs, and project context.
+You are initialising a brain in the current directory. A brain is a folder of plain markdown files that holds long-term memory for one organisation and every product it builds. It needs nothing beyond Claude Code and a text editor.
 
-## Phase 1: Discovery Interview
+This command creates the shared, organisation-level part of the brain and then adds the first product.
 
-Ask the user the following questions **one at a time**, waiting for each answer before proceeding. Be conversational, not robotic.
+**Before starting:** if `BRAIN-INDEX.md` already exists here, stop. Tell the user the brain already exists and point them to `/add-product` (new product), `/migrate` (import an old vault) or `/status`.
 
-1. **What are you building?** (Product name, one-sentence description)
-2. **Who is it for?** (Target users/audience)
-3. **What's the tech stack?** (Languages, frameworks, infrastructure)
-4. **What exists already?** (Existing codebase, MVP, nothing yet, etc.)
-5. **What are the top 3 priorities right now?** (What needs to happen first)
-6. **Any hard constraints?** (Deadlines, budget, team size, platform requirements)
-7. **What does "done" look like for the next milestone?** (Definition of success)
+## Phase 1: Organisation Interview
 
-## Phase 2: Generate Brain Structure
+Ask these **one at a time**, waiting for each answer. Be conversational, not robotic.
 
-After collecting answers, generate the following file structure. Every file should contain **real, actionable content** based on the user's answers — not empty templates.
+1. **What should this brain be called?** A company, studio, team or personal name. "Just me" is fine.
+2. **In one sentence, what does this organisation build, and why?**
+3. **Which values or principles should guide decisions across every product?** Skip if the user has none yet.
+4. **Which product do you want to set up first?** Name only; the product interview comes next. Mention that more products can be added any time with `/add-product`.
 
-### Directory Structure
+## Phase 2: Generate the Shared Structure
+
+Create these files with real content from the answers. No empty placeholders except where marked.
 
 ```
 BRAIN-INDEX.md
 CLAUDE.md
-Execution-Plan.md
-
-00_Company/
-  Company.md            (folder index)
+company/
+  README.md
   Vision.md
   Values.md
-
-01_Engineering/
-  Engineering.md        (folder index)
-  Architecture.md
-  Tech-Stack.md
-  Conventions.md
-  ADR/
-    ADR.md              (folder index — Architecture Decision Records)
-
-02_Product/
-  Product.md            (folder index)
-  MVP-Scope.md
-  Feature-Priorities.md
-  User-Stories.md
-
-03_Operations/
-  Operations.md         (folder index)
-  Environments.md
-  CI-CD.md
-  Monitoring.md
-
-Handoffs/
-  Handoffs.md           (folder index)
-
-Templates/
-  Handoff-Template.md
-  ADR-Template.md
-  Feature-Spec-Template.md
-
-Assets/
-  (empty — for images, PDFs, reference files)
+products/
+  README.md
 ```
 
-### File Content Rules
+### Content Rules
 
-1. **BRAIN-INDEX.md** — Central hub. Starts with project name and one-line description. Links to every top-level folder and key file using `[[wikilinks]]`. This is the first file Claude reads every session.
+- **BRAIN-INDEX.md** — The entry point Claude reads first every session. Contains the organisation name, the one-line description, then these sections:
+  - *Start Here*: links to `CLAUDE.md` and `products/README.md`
+  - *Company*: link to `company/README.md` with a one-line description
+  - *Products*: one bullet per product (link, one-liner, status, current phase). Empty until Phase 3.
+  - *Shared*: link to `templates/README.md`
+- **CLAUDE.md** — Copy `templates/CLAUDE.md` and fill in every `[PLACEHOLDER]`. If `CLAUDE.md` already exists (the installer may have placed it), fill in its placeholders instead of overwriting it.
+- **company/README.md** — Folder index: what lives here, links to `Vision.md` and `Values.md`. Parent line: `> Part of [Brain Index](../BRAIN-INDEX.md)`.
+- **company/Vision.md** — The one-sentence answer expanded into a short vision statement: what is built, for whom, why it matters, and how the products relate to each other. Parent line: `> Part of [Company](README.md)`.
+- **company/Values.md** — The stated principles, each with one line on what it means in practice. If the user skipped this, write a short note that values are not yet defined and link to the vision. Parent line: `> Part of [Company](README.md)`.
+- **products/README.md** — Portfolio index. Parent line `> Part of [Brain Index](../BRAIN-INDEX.md)`, a one-line description, then this table (rows are added in Phase 3):
 
-2. **CLAUDE.md** — Brain DNA. Contains:
-   - Project overview (from discovery answers)
-   - Conventions and rules Claude must follow
-   - File organization guide
-   - Wikilink conventions: every file links back to its parent via `> Part of [[ParentIndex]]`
-   - How to read and update the execution plan
-   - How to create handoff documents
-   - Instruction: "Always read BRAIN-INDEX.md and the latest handoff in Handoffs/ at the start of every session"
+  ```markdown
+  | Product | Status | Phase | Last session | Code |
+  |---------|--------|-------|--------------|------|
+  ```
 
-3. **Execution-Plan.md** — Structured roadmap. Format each phase as:
-   ```markdown
-   ## Phase 1: [Name]
-   **Status:** not_started | in_progress | completed
-   **Target:** [date or milestone]
+### Link Rules
 
-   ### Step 1.1: [Name]
-   - **Status:** not_started
-   - **Effort:** S | M | L | XL
-   - **Dependencies:** none | Step X.Y
-   - **Description:** [1-2 sentences]
-   - [ ] Task 1
-   - [ ] Task 2
-   - [ ] Task 3
-   ```
-   Generate 3-4 phases with 3-5 steps each, based on the user's priorities.
+- Standard relative markdown links only: `[Vision](Vision.md)`, `[Company](../company/README.md)`. No `[[wikilinks]]`.
+- Every file except `BRAIN-INDEX.md` and `CLAUDE.md` starts with a parent line: `> Part of [Parent Title](relative/path.md)`.
+- Every folder has a `README.md` linking to everything inside it.
 
-4. **Every folder index** (Company.md, Engineering.md, etc.) — Contains:
-   - `> Part of [[BRAIN-INDEX]]`
-   - Description of what this department covers
-   - Links to all files in the folder
-   - Status notes if relevant
+## Phase 3: First Product
 
-5. **Every leaf file** — Contains:
-   - `> Part of [[ParentIndex]]` (e.g., `> Part of [[Engineering]]`)
-   - Real content derived from the discovery answers
-   - Cross-links to related files using `[[wikilinks]]` where relevant
+Now follow `.claude/commands/add-product.md` from its Phase 1 for the product named in the interview. Do not ask the user to run `/add-product` themselves; run through it in this conversation.
 
-6. **Templates** — Ready-to-use templates with YAML frontmatter placeholders.
+## Phase 4: Verify and Summarise
 
-### Wikilink Rules
-- Every file (except BRAIN-INDEX.md) must have a `> Part of [[X]]` backlink to its parent
-- Use `[[filename]]` without paths — Obsidian resolves these automatically
-- Cross-link related files (e.g., Architecture.md should link to Tech-Stack.md)
-- BRAIN-INDEX.md links to all folder indexes
-
-## Phase 3: Summary
-
-After creating all files, display:
-1. Total files created (count)
-2. The brain structure as a tree
-3. A quick "what's next" — suggest running `/resume` to start their first working session
-
-Remind the user they can browse everything visually in Obsidian's graph view.
+1. Run `scripts/check-links.sh` and fix anything it reports.
+2. Show the full tree of created files and the file count.
+3. Tell the user the brain works in any markdown editor or forge; the links between files are what make it navigable.
+4. Suggest `/resume <slug>` to start the first working session.

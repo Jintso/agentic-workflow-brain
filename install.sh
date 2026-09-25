@@ -1,83 +1,86 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# install.sh — Install brain commands into an Obsidian vault
+# install.sh — Install Agentic Workflow Brain into a directory
 #
 # Usage:
-#   ./install.sh /path/to/your/obsidian-vault
-#   ./install.sh  (uses current directory)
+#   ./install.sh /path/to/brain     # that directory becomes the brain root (created if missing)
+#   ./install.sh                    # current directory
+#
+# Copies:
+#   .claude/commands/*.md   → <brain>/.claude/commands/   always overwritten (these are the tool)
+#   scripts/check-links.sh  → <brain>/scripts/            always overwritten
+#   templates/*.md          → <brain>/templates/          only files that don't exist yet
+#   templates/CLAUDE.md     → <brain>/CLAUDE.md           only if missing
+#
+# Re-run it to upgrade the commands without touching your content.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-VAULT_DIR="${1:-.}"
+BRAIN_DIR="${1:-.}"
 
-# Resolve to absolute path
-VAULT_DIR="$(cd "$VAULT_DIR" && pwd)"
+mkdir -p "$BRAIN_DIR"
+BRAIN_DIR="$(cd "$BRAIN_DIR" && pwd)"
 
-echo "🧠 Obsidian Brain — Command Installer"
+echo "🧠 Agentic Workflow Brain — Installer"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "Vault: $VAULT_DIR"
+echo "Brain: $BRAIN_DIR"
 echo ""
 
-# Check vault looks like an Obsidian vault
-if [ ! -d "$VAULT_DIR/.obsidian" ]; then
-    echo "⚠️  Warning: No .obsidian/ folder found in $VAULT_DIR"
-    echo "   This might not be an Obsidian vault."
-    read -rp "   Continue anyway? (y/N) " confirm
-    if [[ "$confirm" != [yY] ]]; then
-        echo "Aborted."
-        exit 1
-    fi
-fi
-
-# Create .claude/commands directory in the vault
-COMMANDS_DIR="$VAULT_DIR/.claude/commands"
+# Commands
+COMMANDS_DIR="$BRAIN_DIR/.claude/commands"
 mkdir -p "$COMMANDS_DIR"
-
-# Copy command files
-echo "Installing slash commands..."
-COMMANDS_SRC="$SCRIPT_DIR/.claude/commands"
+echo "Slash commands:"
 INSTALLED=0
+for cmd_file in "$SCRIPT_DIR"/.claude/commands/*.md; do
+    cp "$cmd_file" "$COMMANDS_DIR/"
+    echo "  ✅ /$(basename "$cmd_file" .md)"
+    INSTALLED=$((INSTALLED + 1))
+done
 
-for cmd_file in "$COMMANDS_SRC"/*.md; do
-    if [ -f "$cmd_file" ]; then
-        filename="$(basename "$cmd_file")"
-        cp "$cmd_file" "$COMMANDS_DIR/$filename"
-        echo "  ✅ /$(basename "$filename" .md)"
-        INSTALLED=$((INSTALLED + 1))
+# Scripts
+mkdir -p "$BRAIN_DIR/scripts"
+cp "$SCRIPT_DIR/scripts/check-links.sh" "$BRAIN_DIR/scripts/"
+chmod +x "$BRAIN_DIR/scripts/check-links.sh"
+echo ""
+echo "Scripts:"
+echo "  ✅ scripts/check-links.sh"
+
+# Templates (never overwrite the user's edits)
+mkdir -p "$BRAIN_DIR/templates"
+echo ""
+echo "Templates:"
+for tmpl_file in "$SCRIPT_DIR"/templates/*.md; do
+    name="$(basename "$tmpl_file")"
+    [ "$name" = "CLAUDE.md" ] && continue
+    if [ -e "$BRAIN_DIR/templates/$name" ]; then
+        echo "  ⏭  templates/$name (exists, kept)"
+    else
+        cp "$tmpl_file" "$BRAIN_DIR/templates/$name"
+        echo "  ✅ templates/$name"
     fi
 done
 
-# Copy templates
-TEMPLATES_DIR="$VAULT_DIR/Templates"
-if [ ! -d "$TEMPLATES_DIR" ]; then
-    mkdir -p "$TEMPLATES_DIR"
-    echo ""
-    echo "Installing templates..."
-    for tmpl_file in "$SCRIPT_DIR/templates/"*Template*.md; do
-        if [ -f "$tmpl_file" ]; then
-            cp "$tmpl_file" "$TEMPLATES_DIR/"
-            echo "  ✅ $(basename "$tmpl_file")"
-        fi
-    done
-fi
-
-# Copy CLAUDE.md template if none exists
-if [ ! -f "$VAULT_DIR/CLAUDE.md" ]; then
-    cp "$SCRIPT_DIR/templates/CLAUDE.md" "$VAULT_DIR/CLAUDE.md"
-    echo ""
-    echo "  ✅ CLAUDE.md template placed at vault root"
-    echo "     (Edit this file to match your project)"
+# CLAUDE.md
+echo ""
+if [ -f "$BRAIN_DIR/CLAUDE.md" ]; then
+    echo "  ⏭  CLAUDE.md (exists, kept)"
+else
+    cp "$SCRIPT_DIR/templates/CLAUDE.md" "$BRAIN_DIR/CLAUDE.md"
+    echo "  ✅ CLAUDE.md placed at the brain root; /init-brain fills in the placeholders"
 fi
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "✅ Done! $INSTALLED commands installed."
+echo "✅ Done. $INSTALLED commands installed."
 echo ""
 echo "Next steps:"
-echo "  1. cd $VAULT_DIR"
-echo "  2. claude"
-echo "  3. /init-brain"
+echo "  cd $BRAIN_DIR"
+echo "  claude"
+echo "  /init-brain          # new brain"
+echo "  /migrate <old-vault> # or import an obsidian-brain vault"
 echo ""
-echo "This will start the interactive wizard to create your brain."
-echo "Browse the results in Obsidian's graph view."
+if [ ! -d "$BRAIN_DIR/.git" ]; then
+    echo "Tip: version the brain with git so every session's changes are tracked:"
+    echo "  git -C \"$BRAIN_DIR\" init"
+fi

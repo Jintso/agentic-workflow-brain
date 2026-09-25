@@ -1,62 +1,55 @@
 # /sync — Brain Health Check and Auto-Repair
 
-You are auditing the brain for structural issues and fixing them. This keeps the knowledge graph clean and ensures Obsidian's graph view stays useful.
+You are auditing the whole brain for structural and content issues and fixing them. This keeps the link graph clean so every file is reachable from `BRAIN-INDEX.md`.
 
-## Audit Checklist
+## Step 1: Run the Link Checker
 
-Scan all `.md` files in the vault (excluding `node_modules`, `.git`, and other non-brain directories). Check for:
+Run `scripts/check-links.sh` from the brain root. It is deterministic and reports five kinds of issue:
 
-### 1. Orphan Files
-Files that exist but are **not linked from any index or parent file**.
-- Every file except `BRAIN-INDEX.md` should have a `> Part of [[X]]` backlink
-- Every file should be linked from at least one other file
-- **Fix:** Add missing backlinks and link from the appropriate folder index
+| Code | Meaning | Fix |
+|------|---------|-----|
+| `BROKEN` | A relative link points at a file that doesn't exist | Correct the path if it's a typo (suggest the closest match), create a stub if the topic is valid, remove the link if obsolete. Ask if ambiguous. |
+| `WIKILINK` | A leftover `[[wikilink]]` | Convert to a relative markdown link to the matching file. If no file matches, ask. |
+| `NO-PARENT` | File lacks a `> Part of [...](...)` first line | Add it, pointing at the folder's `README.md` (or the product README for `Execution-Plan.md`). |
+| `ORPHAN` | No other file links to this one | Add it to its folder's `README.md`. |
+| `CROSS-PRODUCT` | A file in one product links into another product | Move the shared material to `company/` and link there from both, or drop the link. |
 
-### 2. Broken Wikilinks
-`[[references]]` that point to files that don't exist.
-- Scan all files for `[[X]]` patterns
-- Check if a file named `X.md` exists anywhere in the vault
-- **Fix:** For each broken link, either:
-  - Create a stub file if the topic is valid
-  - Correct the link if it's a typo (suggest the closest match)
-  - Remove the link if it's obsolete
-  - Ask the user if ambiguous
+Fix everything mechanical without asking, then re-run until it reports clean.
 
-### 3. Empty or Stub Files
-Files that exist but have minimal content (fewer than 3 lines of real content, excluding frontmatter and backlinks).
-- **Fix:** Flag these and ask if the user wants them filled in or removed
+## Step 2: Structural Checks
 
-### 4. Missing Backlinks
-Files referenced by a parent index but that don't link back with `> Part of [[Parent]]`.
-- **Fix:** Add the missing backlink at the top of the file
+### Root
+- `BRAIN-INDEX.md` links to `company/README.md`, `products/README.md`, `templates/README.md`, and every product README.
+- `products/README.md` has exactly one row per folder in `products/`; no rows for folders that don't exist.
+- Each product's row (status, phase, last session) matches its `README.md` and its latest handoff.
 
-### 5. BRAIN-INDEX Completeness
-Check that `BRAIN-INDEX.md` links to all folder indexes.
-- **Fix:** Add missing links
+### Per product
+- Each folder `README.md` links every file in its folder.
+- *Current Status* in the product README matches the execution plan (phase) and the latest handoff (last updated).
+- No links from this product's folder into another product's folder. Move shared material to `company/`.
 
-### 6. Folder Index Completeness
-For each folder index (Company.md, Engineering.md, etc.), verify it links to all files in its folder.
-- **Fix:** Add missing links
+**Fix:** update indexes and status lines directly.
 
-### 7. Execution Plan Drift
-Compare `Execution-Plan.md` against recent handoffs:
-- Are there completed steps still marked as `not_started`?
-- Are there steps marked `in_progress` with no recent handoff mentioning them?
-- Are task checkboxes consistent with step statuses?
-- **Fix:** Update statuses and flag discrepancies
+## Step 3: Content Checks (per product)
 
-### 8. Stale Content Markers
-Search for:
-- `TODO`, `FIXME`, `HACK`, `XXX` markers
-- `[placeholder]`, `[TBD]`, `[fill in]` text
-- Empty sections (headers with no content below)
-- **Fix:** List all occurrences with file locations. Offer to resolve them.
+### Execution plan drift
+Compare `Execution-Plan.md` against the last three handoffs:
+- Completed steps still marked `not_started` or `in_progress`?
+- Steps marked `in_progress` with no recent handoff mentioning them?
+- Task checkboxes inconsistent with step statuses?
+**Fix:** update statuses; flag discrepancies you cannot resolve.
 
-### 9. Handoff Chain Integrity
-Verify handoffs are sequentially numbered and each one exists:
-- No gaps (e.g., handoff-001, handoff-003 with no 002)
-- Most recent handoff reflects actual project state
-- **Fix:** Flag gaps, don't auto-generate missing handoffs
+### Stale content markers
+Search for `TODO`, `FIXME`, `HACK`, `XXX`, `[placeholder]`, `[TBD]`, `[fill in]`, and headers with nothing beneath them.
+**Fix:** list each with file and line. Offer to resolve.
+
+### Stub files
+Files with fewer than three lines of real content, excluding the parent line and headings.
+**Fix:** flag them and ask whether to fill in or remove.
+
+### Handoff chain integrity
+Handoffs are numbered sequentially per product with no gaps, and the latest one reflects the actual state.
+**Fix:** flag gaps. Never generate missing handoffs.
 
 ## Output Format
 
@@ -64,34 +57,31 @@ Verify handoffs are sequentially numbered and each one exists:
 🔍 Brain Sync Report
 ═══════════════════════════
 
-✅ Passed Checks: [count]
-⚠️ Issues Found:  [count]
-🔧 Auto-Fixed:    [count]
-❓ Needs Input:    [count]
+Link checker:      [files] files, [links] links, [issues] issues
+✅ Passed checks:  [count]
+⚠️ Issues found:   [count]
+🔧 Auto-fixed:     [count]
+❓ Needs input:    [count]
 
 ──────────────────────────
 
-[For each issue category with findings:]
+[For each category with findings:]
 
-### [Category Name]
-[Issue description]
+### [Category]
+[Issue]
 → **Fixed:** [what was done]
   or
-→ **Needs input:** [question for user]
+→ **Needs input:** [question for the user]
 
 ──────────────────────────
 
-Summary:
-- [X] files scanned
-- [Y] wikilinks verified
-- [Z] issues resolved
-- Brain health: [Healthy / Needs Attention / Needs Repair]
+Brain health: [Healthy / Needs Attention / Needs Repair]
 ```
 
 ## Behavior
 
-- **Auto-fix obvious issues** without asking (missing backlinks, incomplete indexes)
-- **Ask before changing content** (removing files, resolving ambiguous links)
-- **Never delete files** without explicit user confirmation
-- **Be efficient** — don't list every file that's fine, only report issues
-- If everything is clean, say so briefly: "Brain is healthy. No issues found."
+- **Auto-fix mechanical issues** without asking: missing parent lines, incomplete indexes, stale status rows.
+- **Ask before changing content**: removing files, resolving ambiguous links, rewriting sections.
+- **Never delete files** without explicit confirmation.
+- **Report only issues**, not every file that is fine.
+- If everything is clean: "Brain is healthy. No issues found."

@@ -1,11 +1,11 @@
-> Part of [[Product]]
+> Part of [Features](README.md)
 
 # Feature: [Name]
 
 **Status:** planning | in_progress | completed
 **Priority:** critical | high | medium | low
 **Effort:** S | M | L | XL
-**Added:** [date]
+**Added:** YYYY-MM-DD
 
 ## Summary
 [What it does, why it matters, who it's for]
@@ -24,7 +24,7 @@
 - [Excluded item]
 
 ## Technical Approach
-- **Architecture impact:** [How this fits into [[Architecture]]]
+- **Architecture impact:** [How this fits into [Architecture](../engineering/Architecture.md)]
 - **Key components:** [What needs to be built]
 - **Data model changes:** [If any]
 - **API changes:** [If any]
@@ -38,5 +38,6 @@
 - [How to verify this works]
 
 ## Related
-- [[Architecture]]
-- [[Feature-Priorities]]
+- [Architecture](../engineering/Architecture.md)
+- [Feature Priorities](../Feature-Priorities.md)
+- [User Stories](../User-Stories.md)
