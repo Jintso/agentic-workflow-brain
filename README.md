@@ -15,7 +15,7 @@ Ten **Claude Code slash commands** plus a folder convention. Together they give 
 | Command | What it does |
 |---------|-------------|
 | `/init-brain` | Interactive wizard. Creates the shared structure and the first product. |
-| `/add-product` | Interviews you about a product and generates its self-contained folder. |
+| `/add-product` | Reads the product's code if it exists, interviews you about the rest, and generates its self-contained folder. |
 | `/resume [product]` | Loads context, shows progress, recommends what to work on. |
 | `/wrap-up` | Captures session work, writes a handoff, updates the execution plan. |
 | `/status [product\|all]` | Portfolio dashboard across products, or a deep dive on one. |
@@ -83,7 +83,7 @@ Claude Code treats the working directory and an attached directory differently, 
 
 Started this way, the code repo's hooks, permission rules and `CLAUDE.md` all apply, the brain's commands are available, and the environment variable brings in the brain's `CLAUDE.md`. `/resume` with no argument picks the product whose code location is the working directory.
 
-The commands find the brain on their own: every brain path is relative to the **brain root**, the directory holding `BRAIN-INDEX.md` and `products/`, wherever it is attached. `/add-product` also offers to add a short *Brain* section to the code repo's `CLAUDE.md`, so a session finds the brain even without the environment variable.
+The commands find the brain on their own: every brain path is relative to the **brain root**, the directory holding `BRAIN-INDEX.md` and `products/`, wherever it is attached. `/add-product` also offers to add a short *Brain* section to the code repo, so a session finds the brain even without the environment variable. The section holds paths on your machine. In a private repo it goes into `CLAUDE.md`. In a public one it goes into `CLAUDE.local.md`, which is added to `.gitignore`, so the paths are not published.
 
 **Portfolio work: start in the brain.** `/status all`, `/sprint all`, `/sync`, `/add-product`, `/migrate` and `/init-brain` need no code repo:
 
