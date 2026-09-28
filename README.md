@@ -25,7 +25,7 @@ Ten **Claude Code slash commands** plus a folder convention. Together they give 
 | `/sync` | Audits brain health, runs the link checker, repairs what it can. |
 | `/migrate <path>` | Imports a vault made with the original single-product layout. |
 
-Commands that act on one product pick it from the argument, from the conversation so far, or automatically when only one exists. Otherwise they list the products and ask.
+Commands that act on one product pick it from the argument, from the conversation so far, from the working directory when it is a product's code location, or automatically when only one exists. Otherwise they list the products and ask.
 
 ## Setup
 
@@ -62,35 +62,59 @@ Then type `/init-brain`. The wizard asks about your organisation, then about you
 
 ### Where to Put the Brain
 
-**Its own repository** (recommended, especially with several products). Start Claude from the brain and give it access to whichever code base you're working on:
+**Its own repository** (recommended, especially with several products). The brain and each code base are then separate directories, and a session needs both: one is the working directory, the other is attached with `--add-dir`.
+
+### How to Start a Session
+
+**Product work: start in the code repo and attach the brain.**
+
+```bash
+cd ~/code/addon-manager
+CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ~/brain
+```
+
+Claude Code treats the working directory and an attached directory differently, and the code repo is the one that needs to be the working directory:
+
+| | Loads from the working directory | Loads from an attached directory |
+|---|---|---|
+| Slash commands (`.claude/commands/`) | yes | yes |
+| Hooks and permission rules (`.claude/settings.json`) | yes | no |
+| `CLAUDE.md` | yes | only with `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` |
+
+Started this way, the code repo's hooks, permission rules and `CLAUDE.md` all apply, the brain's commands are available, and the environment variable brings in the brain's `CLAUDE.md`. `/resume` with no argument picks the product whose code location is the working directory.
+
+The commands find the brain on their own: every brain path is relative to the **brain root**, the directory holding `BRAIN-INDEX.md` and `products/`, wherever it is attached. `/add-product` also offers to add a short *Brain* section to the code repo's `CLAUDE.md`, so a session finds the brain even without the environment variable.
+
+**Portfolio work: start in the brain.** `/status all`, `/sprint all`, `/sync`, `/add-product`, `/migrate` and `/init-brain` need no code repo:
 
 ```bash
 cd ~/brain
-claude --add-dir ~/code/addon-manager
+claude
 ```
 
-**Shorter start command.** Typing that every session gets old. Add one shell alias per product so a session is one word away:
+**Shorter start command.** Add one shell alias per product so a session is one word away:
 
 ```bash
 # bash / zsh (~/.bashrc or ~/.zshrc)
-alias brain-addons='cd ~/brain && claude --add-dir ~/code/addon-manager'
-alias brain-shop='cd ~/brain && claude --add-dir ~/code/webshop'
+alias addons='cd ~/code/addon-manager && CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ~/brain'
+alias shop='cd ~/code/webshop && CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ~/brain'
 ```
 
 ```fish
 # fish (~/.config/fish/config.fish)
-alias brain-addons 'cd ~/brain && claude --add-dir ~/code/addon-manager'
-alias brain-shop 'cd ~/brain && claude --add-dir ~/code/webshop'
+alias addons 'cd ~/code/addon-manager && env CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ~/brain'
+alias shop 'cd ~/code/webshop && env CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ~/brain'
 ```
 
-Then `brain-addons` opens Claude in the brain with that product's code attached, and `/resume addon-manager` is the first thing you type.
+Then `addons` opens Claude in that product's code with the brain attached, and `/resume` is the first thing you type.
 
 **Inside a code repository.** Run `./install.sh .` at the repo root. The brain files sit next to the code, and `claude` started from the root sees both. Use this for a single product whose code and brain should travel together.
 
 ## Daily Workflow
 
 ```
-/resume addon-manager   ← Start of session: loads context, shows progress
+addons                  ← Shell alias: Claude starts in the code repo, brain attached
+/resume                 ← Start of session: loads context, shows progress
 ... work ...            ← Claude has full product context
 /wrap-up                ← End of session: writes the handoff for next time
 ```
@@ -154,7 +178,16 @@ If you have a vault from the original single-product version (numbered `00_Compa
 /migrate /path/to/old-vault
 ```
 
-It copies the vault into `products/<slug>/`, renames folder indexes to `README.md`, converts every wikilink to a relative link, and registers the product. The source vault is never modified.
+It copies the vault into `products/<slug>/`, renames folder indexes to `README.md`, converts every wikilink to a relative link, and registers the product. The old `00_Company/` vision and values become the product's own `Vision.md` and `Values.md`. The source vault is never modified.
+
+A legacy vault usually sits inside the product's code repository, with `CLAUDE.md` and `.claude/commands` at the repository root symlinked into it. `/migrate` finds those and, after asking, moves the repository onto the brain:
+
+- `CLAUDE.md` becomes a real file that keeps the project's own rules and points at the brain
+- product-specific slash commands move into the repository's own `.claude/commands/`
+- hooks and permission rules stay where they are, since they load when a session starts in the repository
+- per-project memory that mentions the old vault is updated
+
+Nothing in the code repository is committed for you.
 
 ## Customization
 

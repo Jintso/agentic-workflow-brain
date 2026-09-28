@@ -2,6 +2,10 @@
 
 You are helping the user plan, spec and implement a new feature from scratch. This command handles the full lifecycle: spec → plan → execute → update brain.
 
+## Brain Root
+
+Every brain path in this command (`BRAIN-INDEX.md`, `products/...`, `templates/...`, `scripts/...`) is relative to the **brain root**, not to the working directory. The brain root is the directory that holds both `BRAIN-INDEX.md` and `products/`: either the working directory or one attached with `--add-dir`. Find it first. If no such directory is available, stop and tell the user to attach the brain with `claude --add-dir /path/to/brain`. If the brain's `CLAUDE.md` is not in context, read it from the brain root. Run the link checker as `<brain root>/scripts/check-links.sh <brain root>`.
+
 ## Input
 
 - `/feature user authentication`
@@ -87,7 +91,7 @@ Task 2 (independent)
 
 Ask: "Spec and plan are ready at `products/<slug>/features/Feature-[Name].md`. Want to start on Task 1 now?"
 
-If the code lives outside this directory and isn't accessible, say so and give the `claude --add-dir <path>` command before continuing.
+If the product's code location is neither the working directory nor an attached directory, say so and give the start command under *Code Location* in `CLAUDE.md` before continuing.
 
 As you work:
 - Check off tasks as they complete

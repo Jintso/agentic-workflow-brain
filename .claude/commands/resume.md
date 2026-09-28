@@ -2,11 +2,16 @@
 
 You are resuming a working session. Load the brain, show the user where things stand, and help them pick what to work on.
 
+## Brain Root
+
+Every brain path in this command (`BRAIN-INDEX.md`, `products/...`, `templates/...`, `scripts/...`) is relative to the **brain root**, not to the working directory. The brain root is the directory that holds both `BRAIN-INDEX.md` and `products/`: either the working directory or one attached with `--add-dir`. Find it first. If no such directory is available, stop and tell the user to attach the brain with `claude --add-dir /path/to/brain`. If the brain's `CLAUDE.md` is not in context, read it from the brain root.
+
 ## Step 1: Pick the Product
 
 Read `BRAIN-INDEX.md` and `products/README.md`, then apply the Product Resolution rule from `CLAUDE.md`:
 
 - `/resume <slug>` → that product. If the slug matches no folder in `products/`, list the products and ask.
+- No argument, and the working directory is a product's code location or inside it → that product.
 - No argument and one product → that product.
 - No argument and several products → show one line per product (name, status, phase, date of last handoff), suggest the one with the most recent handoff, and ask.
 
@@ -50,7 +55,7 @@ Phase 3: Polish        [----------]   0%  (0/5 steps)
 
 **Parallel Opportunities:** ready steps that don't depend on each other.
 
-**Code Access:** if the product README names a code location outside this directory and you cannot read it, say so and tell the user to restart with `claude --add-dir <path>` before implementation work.
+**Code Access:** if the product's code location is neither the working directory nor an attached directory, say so before implementation work. Tell the user to start the session in the code repo with the brain attached, using the command under *Code Location* in `CLAUDE.md`.
 
 ## Step 4: Ask What to Work On
 

@@ -2,9 +2,13 @@
 
 You are auditing the whole brain for structural and content issues and fixing them. This keeps the link graph clean so every file is reachable from `BRAIN-INDEX.md`.
 
+## Brain Root
+
+Every brain path in this command (`BRAIN-INDEX.md`, `products/...`, `templates/...`, `scripts/...`) is relative to the **brain root**, not to the working directory. The brain root is the directory that holds both `BRAIN-INDEX.md` and `products/`: either the working directory or one attached with `--add-dir`. Find it first. If no such directory is available, stop and tell the user to attach the brain with `claude --add-dir /path/to/brain`. If the brain's `CLAUDE.md` is not in context, read it from the brain root. Run the link checker as `<brain root>/scripts/check-links.sh <brain root>`.
+
 ## Step 1: Run the Link Checker
 
-Run `scripts/check-links.sh` from the brain root. It is deterministic and reports five kinds of issue:
+Run the link checker (see *Brain Root*). It is deterministic and reports five kinds of issue:
 
 | Code | Meaning | Fix |
 |------|---------|-----|

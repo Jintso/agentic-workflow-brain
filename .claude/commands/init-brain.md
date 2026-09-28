@@ -1,10 +1,14 @@
 # /init-brain — Create a New Brain
 
-You are initialising a brain in the current directory. A brain is a folder of plain markdown files that holds long-term memory for one organisation and every product it builds. It needs nothing beyond Claude Code and a text editor.
+You are initialising a brain at the brain root (see below), normally the current directory. A brain is a folder of plain markdown files that holds long-term memory for one organisation and every product it builds. It needs nothing beyond Claude Code and a text editor.
 
 This command creates the shared, organisation-level part of the brain and then adds the first product.
 
-**Before starting:** if `BRAIN-INDEX.md` already exists here, stop. Tell the user the brain already exists and point them to `/add-product` (new product), `/migrate` (import an old vault) or `/status`.
+**Before starting:** if `BRAIN-INDEX.md` already exists at the brain root, stop. Tell the user the brain already exists and point them to `/add-product` (new product), `/migrate` (import an old vault) or `/status`.
+
+## Brain Root
+
+The brain does not exist yet, so the **brain root** is the directory the installer ran against: the one that holds `templates/` and `scripts/check-links.sh` beside `.claude/commands/`. It is normally the working directory; it can also be a directory attached with `--add-dir`. Every path in this command is relative to the brain root, not to the working directory. Run the link checker as `<brain root>/scripts/check-links.sh <brain root>`.
 
 ## Phase 1: Organisation Interview
 

@@ -4,9 +4,13 @@ You are generating a health dashboard from the brain. Three modes:
 
 | Invocation | Output |
 |------------|--------|
-| `/status` | One product in the brain → product dashboard. Several → portfolio dashboard, then offer a product dashboard. |
+| `/status` | The working directory is a product's code location, or the brain has one product → product dashboard. Otherwise → portfolio dashboard, then offer a product dashboard. |
 | `/status <slug>` | Product dashboard for that product |
 | `/status all` | Portfolio dashboard followed by a product dashboard for every product |
+
+## Brain Root
+
+Every brain path in this command (`BRAIN-INDEX.md`, `products/...`, `templates/...`, `scripts/...`) is relative to the **brain root**, not to the working directory. The brain root is the directory that holds both `BRAIN-INDEX.md` and `products/`: either the working directory or one attached with `--add-dir`. Find it first. If no such directory is available, stop and tell the user to attach the brain with `claude --add-dir /path/to/brain`. If the brain's `CLAUDE.md` is not in context, read it from the brain root. Run the link checker as `<brain root>/scripts/check-links.sh <brain root>`.
 
 ## Data Collection
 
