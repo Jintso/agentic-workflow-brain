@@ -29,6 +29,7 @@ A legacy vault usually sits inside the product's code repository, often as `brai
 3. **Hooks and permission rules.** Note where `.claude/settings.json` and `.claude/settings.local.json` live, and any hook whose command uses a path inside the vault.
 4. **Per-project memory.** Claude Code keeps memory per working directory under `~/.claude/projects/`, in a folder named after the code location with every `/` replaced by `-`, the leading one included: `/home/me/code/app` → `~/.claude/projects/-home-me-code-app/memory/`. Note memory files that mention vault paths, wikilinks or the old command locations. If the session is not allowed to read that folder, say so in the report and give the user the path to check.
 5. **Public or private, and other clones.** As in `/add-product` Phase 1, *Inspect the Code Location*, item 4. Step 5 decides from this where the *Brain* section goes.
+6. **The clone against its remote, and the vault against the code.** Compare the clone with its remote first, as `/add-product` Phase 1 does, and never pull without a yes. The vault describes the product as it was when it was last updated: check its claims about commands, file names, versions and features against the code, as in `/add-product` item 2, and record the mismatches as findings in the new `Feature-Priorities.md`. Nothing in the copied files is corrected silently.
 
 If the vault stands alone, skip this part and Step 5.
 
@@ -43,7 +44,7 @@ The old `00_Company/` folder describes one product, not an organisation with sev
 
 | Old | New (`products/<slug>/`) |
 |-----|--------------------------|
-| `BRAIN-INDEX.md` | `README.md` — rewrite as a product index (see `/add-product` Phase 2) using its *Current Status* section. `**Code:**` is the code location from Step 1 |
+| `BRAIN-INDEX.md` | `README.md` — rewrite as a product index (see `/add-product` Phase 2) using its *Current Status* section. `**Code:**` is the code location from Step 1, and *Latest commit* the commit Step 1 read |
 | `CLAUDE.md` | not copied; copy its project-specific rules (coding conventions, packaging, design, workflow) into `engineering/Conventions.md`. Step 5 handles the code repository's own `CLAUDE.md` |
 | `Execution-Plan.md` | `Execution-Plan.md` |
 | `00_Company/Company.md` | not copied; fold its overview into `README.md` |
@@ -90,7 +91,7 @@ Show the user what Step 1 found and what you propose for each item below. **Ask 
 3. **Hooks and permission rules.** Leave settings files that already sit in the code repository's own `.claude/` where they are: they load when a session starts there. If they sit inside the vault, or a hook uses a path inside the vault, propose the corrected version.
 4. **Per-project memory.** It keeps loading in sessions started in the code repository. Propose edits to the files noted in Step 1 so they name the new locations. They lie outside both directories, so the user has to approve each edit.
 
-**Replacing a symlink:** remove the link itself (`rm path`, no trailing slash), then create the real file or folder. Never write through it: that changes the vault. Check with `ls -la` first.
+**Replacing a symlink:** remove the link itself (`rm path`, no trailing slash), then create the real file or folder. Never write through it: that changes the vault. Check with `ls -la` first. Claude Code asks before any change under a repository's `.claude/` folder. If that is refused, give the user the exact commands to run with `!`.
 
 ## Step 6: Register and Verify
 
