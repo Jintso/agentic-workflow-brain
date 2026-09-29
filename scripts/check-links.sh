@@ -10,12 +10,16 @@
 #   ORPHAN     a file that no other file links to
 #   CROSS-PRODUCT  a link from one product's folder into another's
 #
+# Fenced code blocks (``` or ~~~) and inline code spans are skipped, so a
+# file can show an example link or wikilink. Indented code blocks are not
+# recognised: fence an example instead.
+#
 # Usage:
 #   scripts/check-links.sh                 # from the brain root
 #   scripts/check-links.sh /path/to/brain
 #
 # Exit status: 0 clean, 1 issues found, 2 no brain found.
-# Needs only bash, find, grep, sed, sort.
+# Needs only bash, find, grep, sed, awk, sort.
 
 set -u
 
@@ -43,12 +47,40 @@ files=0
 links=0
 ROOT_ABS="$(pwd -P)"
 
+# Print a markdown file with fenced code blocks and inline code spans blanked
+# out. A fence closes on the same character it opened with, at least as long.
+strip_code() {
+  awk '
+    {
+      line = $0
+      if (fence == "") {
+        if (match(line, /^ ? ? ?(```+|~~~+)/)) {
+          f = substr(line, RSTART, RLENGTH); sub(/^ +/, "", f)
+          fence = f; print ""; next
+        }
+      } else {
+        t = line; sub(/^ +/, "", t)
+        if (substr(t, 1, length(fence)) == fence && substr(t, 1, 1) == substr(fence, 1, 1)) {
+          rest = substr(t, length(fence) + 1)
+          gsub(substr(fence, 1, 1), "", rest)
+          if (rest ~ /^[ \t]*$/) fence = ""
+        }
+        print ""; next
+      }
+      gsub(/``([^`]|`[^`])*``/, "", line)
+      gsub(/`[^`]*`/, "", line)
+      print line
+    }
+  ' "$1"
+}
+
 while IFS= read -r f; do
   files=$((files + 1))
   dir="$(dirname "$f")"
+  strip_code "$f" > "$TMP/body"
 
-  # --- links: every ](target) in the file, minus URLs, anchors and absolute paths
-  grep -o '\]([^)]*)' "$f" 2>/dev/null | sed 's/^](//; s/)$//' | while IFS= read -r raw; do
+  # --- links: every ](target) outside code, minus URLs, anchors and absolute paths
+  grep -o '\]([^)]*)' "$TMP/body" 2>/dev/null | sed 's/^](//; s/)$//' | while IFS= read -r raw; do
     t="${raw%% *}"                 # drop an optional "title"
     t="${t#<}"; t="${t%>}"         # drop <angle brackets>
     t="${t%%#*}"                   # drop #anchor
@@ -77,14 +109,14 @@ while IFS= read -r f; do
     fi
   done < "$TMP/cur"
 
-  # --- leftover wikilinks
-  n="$(grep -o '\[\[[^]]*\]\]' "$f" 2>/dev/null | wc -l | tr -d ' ')"
+  # --- leftover wikilinks outside code
+  n="$(grep -o '\[\[[^]]*\]\]' "$TMP/body" 2>/dev/null | wc -l | tr -d ' ')"
   if [ "$n" -gt 0 ]; then
     printf 'WIKILINK   %s (%s found)\n' "$f" "$n" >> "$TMP/issues"
   fi
 
   # --- parent line
-  if [ "$f" != "BRAIN-INDEX.md" ] && ! grep -q '^> Part of \[' "$f"; then
+  if [ "$f" != "BRAIN-INDEX.md" ] && ! grep -q '^> Part of \[' "$TMP/body"; then
     printf 'NO-PARENT  %s\n' "$f" >> "$TMP/issues"
   fi
 done < "$TMP/files"
