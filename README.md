@@ -85,6 +85,8 @@ Started this way, the code repo's hooks, permission rules and `CLAUDE.md` all ap
 
 The commands find the brain on their own: every brain path is relative to the **brain root**, the directory holding `BRAIN-INDEX.md` and `products/`, wherever it is attached. `/add-product` also offers to add a short *Brain* section to the code repo, so a session finds the brain even without the environment variable. The section holds paths on your machine. In a private repo it goes into `CLAUDE.md`. In a public one it goes into `CLAUDE.local.md`, which is added to `.gitignore`, so the paths are not published.
 
+**A repo that tracks its own work.** If a repo already keeps `TODO.md`, `HANDOFF.md` or plan files, `/add-product` asks which place leads from now on, since two lists of open work drift apart. Usually the brain takes over. When something that cannot see the brain reads the repo's record, such as an agent working in a clone on another machine, the repo keeps leading: the product folder then holds the milestone, the priorities and short handoffs that point at the repo's resume point, and `/resume`, `/wrap-up` and `/feature` defer to the repo.
+
 **Portfolio work: start in the brain.** `/status all`, `/sprint all`, `/sync`, `/add-product`, `/migrate` and `/init-brain` need no code repo:
 
 ```bash

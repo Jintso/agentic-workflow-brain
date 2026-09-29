@@ -42,6 +42,8 @@ Every new file needs a parent line (`> Part of [Parent](path.md)`) and an entry 
 
 ## Step 3: Create the Handoff
 
+If the product README says the repo leads (a section *Where Work Is Tracked*), the repo's own wrap-up writes the session record. Check that it has run, and ask the user to run it first if not. Then write the short handoff that `products/<slug>/handoffs/README.md` describes: it points at the repo's resume point and does not repeat it.
+
 Next number = highest existing `handoff-NNN.md` in `products/<slug>/handoffs/` plus one, zero-padded to three digits. Create `products/<slug>/handoffs/handoff-NNN.md` following `templates/Handoff-Template.md`:
 
 ```markdown

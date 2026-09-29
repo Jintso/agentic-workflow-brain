@@ -17,6 +17,8 @@ Resolve the product per the Product Resolution rule in `CLAUDE.md`. If the descr
 
 Read `products/<slug>/MVP-Scope.md`, `Feature-Priorities.md`, `User-Stories.md`, and `products/<slug>/engineering/Architecture.md`, `Tech-Stack.md`, `Conventions.md`. If the code is accessible, check what already exists.
 
+If `products/<slug>/features/README.md` says specs are written in the repo, say where and with which command, and ask before writing a spec here. A spec belongs here only when it concerns the brain.
+
 Create `products/<slug>/features/Feature-[Name].md` from `templates/Feature-Spec-Template.md`:
 
 ```markdown

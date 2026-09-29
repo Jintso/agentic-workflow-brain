@@ -39,7 +39,8 @@ If the clone is behind, or holds uncommitted or unpushed work, say so and ask ho
 4. **Public or private.** `git remote -v` shows where the repository is published. Find out whether it is public, for example with `gh repo view --json visibility`. If you cannot tell, ask in the interview. Phase 3 depends on the answer.
 5. **Operations.** CI configuration, container files, deployment scripts. Never copy a secret into the brain.
 6. **Claude Code entry points.** List the repository root and its `.claude/` folder with `ls -la`. A listing of regular files hides symlinks. Note `CLAUDE.md`, `CLAUDE.local.md`, commands and settings files, and where each symlink points. Project rules in `CLAUDE.md` are a source for `engineering/Conventions.md`.
-7. **Per-project memory.** Claude Code keeps memory per working directory under `~/.claude/projects/`, in a folder named after the code location with every `/` replaced by `-`, the leading one included: `/home/me/code/app` → `~/.claude/projects/-home-me-code-app/memory/`. Note what it says about the project. If the session is not allowed to read that folder, say so in the summary and give the user the path to check.
+7. **Work tracked in the repo.** A repo may already track its own work: `TODO.md`, `HANDOFF.md`, `ROADMAP.md`, a `plans/` or `docs/handoff/` folder, issues on the forge, and commands or skills that write them. For each, note what it holds, when it last changed (`git log -1 -- <path>`), and who reads it: people, a CI job, an agent working in another clone, a session on a machine without this brain. A record that something outside this machine reads is a reason for the repo to keep leading (question 8).
+8. **Per-project memory.** Claude Code keeps memory per working directory under `~/.claude/projects/`, in a folder named after the code location with every `/` replaced by `-`, the leading one included: `/home/me/code/app` → `~/.claude/projects/-home-me-code-app/memory/`. Note what it says about the project. If the session is not allowed to read that folder, say so in the summary and give the user the path to check.
 
 **A legacy vault is a case for `/migrate`.** If the repository holds a vault in the original layout (a `BRAIN-INDEX.md` with no `products/` beside it, numbered folders such as `00_Company/`), or if its `CLAUDE.md` or `.claude/commands` is a symlink into one, say so and point the user to `/migrate <path to the vault>`, which imports the vault and moves the repository onto this brain. Continue here only if the user wants a fresh product folder anyway.
 
@@ -54,8 +55,11 @@ Ask **one at a time**, conversationally. If the product name was already given (
 5. **Any hard constraints?** Deadlines, budget, team size, platform requirements.
 6. **What does "done" look like for the next milestone?**
 7. **Status?** `active` (default), `paused` or `maintenance`.
+8. **Where is open work tracked from now on?** Ask only when the inspection found work tracked in the repo. Two lists of open work drift apart, so one place leads:
+   - **The brain leads** (recommend it by default). The open items of the repo's files are carried into the execution plan and the feature priorities. Then ask what becomes of each file: a pointer to the brain, a frozen record with a line saying it is no longer updated, or left as it is. If the repo's `CLAUDE.md` describes the old workflow, it needs a change too. Changes to the repo are made in Phase 3, after asking.
+   - **The repo leads** (recommend it when something outside this machine reads the repo's record). The repo's files stay the working record, and the product folder holds the product view: see *When the Repo Leads* in Phase 2.
 
-**After an inspection, do not ask what the code already answered.** Show what you found first: a draft answer for every question the inspection covers, each with its source (`README.md`, the git history, `Cargo.toml`). Let the user correct the drafts. List the findings of the docs check with them, and the state of the clone against its remote. Then ask the open questions one at a time. Questions 4 and 6 are decisions, not facts: always ask them. You may suggest answers from what you found, marked as suggestions. If the docs check found several mismatches, suggest bringing the docs in line with the code as one of the priorities.
+**After an inspection, do not ask what the code already answered.** Show what you found first: a draft answer for every question the inspection covers, each with its source (`README.md`, the git history, `Cargo.toml`). Let the user correct the drafts. List the findings of the docs check with them, and the state of the clone against its remote. Then ask the open questions one at a time. Questions 4, 6 and 8 are decisions, not facts: always ask them. You may suggest answers from what you found, marked as suggestions. If the docs check found several mismatches, suggest bringing the docs in line with the code as one of the priorities.
 
 Then propose a **slug**: the product name in lowercase kebab-case (`Addon Manager` → `addon-manager`). Confirm it with the user. It must not match an existing folder in `products/`.
 
@@ -160,6 +164,17 @@ products/<slug>/
 
 6. **handoffs/README.md** — Explain that `/wrap-up` writes `handoff-NNN.md` here and `/resume` reads the latest one. Include an empty *Index* list.
 
+7. **ADR-001** — If question 8 was asked, record the answer as `engineering/adr/ADR-001-<topic>.md` from `templates/ADR-Template.md`, listed in the ADR index: the repo's files and their state, who reads them, the decision, what becomes of each file, and the alternative not chosen.
+
+### When the Repo Leads
+
+If the answer to question 8 is that the repo leads, the repo's files stay the working record and the brain must not grow a second one. Change the files above as follows:
+
+- **README.md** gets a section *Where Work Is Tracked* that names the repo's files and links ADR-001. *Current Status* adds a line *Resume point in the repo* (for example the latest session in `HANDOFF.md`). If the repo has its own commands for the start and end of a session, add a table with the order of the steps: at the start `/resume`, then the repo's; at the end the repo's, then `/wrap-up`.
+- **Execution-Plan.md** stays at the level of the milestone. A step names the entry or plan file in the repo by path and does not restate its tasks. Say so at the top of the plan.
+- **features/README.md** says where specs are written in the repo, and with which command. The *Index* stays empty. `/feature` is for a spec that concerns the brain only.
+- **handoffs/README.md** says that a handoff here is short and points at the repo's resume point, with a table of what it holds: the pointer (the repo's session and commit), the steps of the plan that moved, what concerns only the brain, and what waits for the user. Where the brain and the repo disagree, the repo is right.
+
 ### Link Rules
 
 - Relative markdown links only. Paths are relative to the file that contains them.
@@ -197,6 +212,9 @@ products/<slug>/
 
    Every path a brain command mentions is relative to the brain root, not to this repo. The brain's rules are in `CLAUDE.md` at the brain root; read it if it is not already in context. Start with `/resume <slug>`, end with `/wrap-up`.
    ```
+
+   When the repo leads (question 8), the last sentence names the repo's own steps too, in their order: for example "Start with `/resume <slug>`, then `/pickup`. End with `/wrapup`, then `/wrap-up`."
+5. If the brain leads (question 8) and the user chose to change the repo's tracking files, make those changes now, under the same rules as step 4: ask first and name the files, check for symlinks, do not commit. Carry every open item into the brain before a file becomes a pointer.
 
 ## Phase 4: Verify and Summarise
 
