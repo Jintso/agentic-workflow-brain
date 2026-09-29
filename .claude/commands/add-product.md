@@ -26,12 +26,20 @@ If the code location is a directory this session can read, inspect it before the
 
 Read only. Nothing in the code repository changes in this phase.
 
+**First, compare the clone with its remote.** The inspection describes the clone on disk. If it is behind, the brain describes an older state. Check before reading anything else, without fetching:
+
+- `git status --short --branch` shows the branch, uncommitted changes, and how far the branch was ahead or behind at the last fetch.
+- `git ls-remote <remote> <branch>` gives the remote's current commit. If that commit is not in the clone (`git cat-file -e <commit>` fails), the remote has commits the clone lacks.
+
+If the clone is behind, or holds uncommitted or unpushed work, say so and ask how to go on: the user pulls or commits first, or the inspection describes the clone as it is. Pulling changes the repository, so never pull without a yes. If the remote cannot be reached, say so and go on. Note the commit the inspection reads and how it stands against the remote; the product README records both.
+
 1. **The project.** The README, the build manifest (`package.json`, `Cargo.toml`, `pyproject.toml` or similar) and the top-level layout. They give the name, the description, the target users, the stack and the architecture.
-2. **The history.** `git log`: the date of the first commit, the date of the latest one, and the tags. The first commit dates the start of the product. The log shows what is already done.
-3. **Public or private.** `git remote -v` shows where the repository is published. Find out whether it is public, for example with `gh repo view --json visibility`. If you cannot tell, ask in the interview. Phase 3 depends on the answer.
-4. **Operations.** CI configuration, container files, deployment scripts. Never copy a secret into the brain.
-5. **Claude Code entry points.** List the repository root and its `.claude/` folder with `ls -la`. A listing of regular files hides symlinks. Note `CLAUDE.md`, `CLAUDE.local.md`, commands and settings files, and where each symlink points. Project rules in `CLAUDE.md` are a source for `engineering/Conventions.md`.
-6. **Per-project memory.** Claude Code keeps memory per working directory under `~/.claude/projects/`, in a folder named after the code location with every `/` replaced by `-`, the leading one included: `/home/me/code/app` → `~/.claude/projects/-home-me-code-app/memory/`. Note what it says about the project. If the session is not allowed to read that folder, say so in the summary and give the user the path to check.
+2. **The docs against the code.** Docs fall behind the code, and the brain must not copy what is no longer true. Check the claims a reader acts on against the code at the commit you read: commands to build, run and deploy; file and folder names; configuration keys, ports and versions; listed features and scripts; the architecture described. Where they disagree, the code is right: write the brain's files from the code, and record the claim as a finding (Phase 2, `Feature-Priorities.md`). You need not check every line, but say in the summary what was checked and what was not.
+3. **The history.** `git log`: the date of the first commit, the date of the latest one, and the tags. The first commit dates the start of the product. The log shows what is already done.
+4. **Public or private.** `git remote -v` shows where the repository is published. Find out whether it is public, for example with `gh repo view --json visibility`. If you cannot tell, ask in the interview. Phase 3 depends on the answer.
+5. **Operations.** CI configuration, container files, deployment scripts. Never copy a secret into the brain.
+6. **Claude Code entry points.** List the repository root and its `.claude/` folder with `ls -la`. A listing of regular files hides symlinks. Note `CLAUDE.md`, `CLAUDE.local.md`, commands and settings files, and where each symlink points. Project rules in `CLAUDE.md` are a source for `engineering/Conventions.md`.
+7. **Per-project memory.** Claude Code keeps memory per working directory under `~/.claude/projects/`, in a folder named after the code location with every `/` replaced by `-`, the leading one included: `/home/me/code/app` → `~/.claude/projects/-home-me-code-app/memory/`. Note what it says about the project. If the session is not allowed to read that folder, say so in the summary and give the user the path to check.
 
 **A legacy vault is a case for `/migrate`.** If the repository holds a vault in the original layout (a `BRAIN-INDEX.md` with no `products/` beside it, numbered folders such as `00_Company/`), or if its `CLAUDE.md` or `.claude/commands` is a symlink into one, say so and point the user to `/migrate <path to the vault>`, which imports the vault and moves the repository onto this brain. Continue here only if the user wants a fresh product folder anyway.
 
@@ -47,7 +55,7 @@ Ask **one at a time**, conversationally. If the product name was already given (
 6. **What does "done" look like for the next milestone?**
 7. **Status?** `active` (default), `paused` or `maintenance`.
 
-**After an inspection, do not ask what the code already answered.** Show what you found first: a draft answer for every question the inspection covers, each with its source (`README.md`, the git history, `Cargo.toml`). Let the user correct the drafts. Then ask the open questions one at a time. Questions 4 and 6 are decisions, not facts: always ask them. You may suggest answers from what you found, marked as suggestions.
+**After an inspection, do not ask what the code already answered.** Show what you found first: a draft answer for every question the inspection covers, each with its source (`README.md`, the git history, `Cargo.toml`). Let the user correct the drafts. List the findings of the docs check with them, and the state of the clone against its remote. Then ask the open questions one at a time. Questions 4 and 6 are decisions, not facts: always ask them. You may suggest answers from what you found, marked as suggestions. If the docs check found several mismatches, suggest bringing the docs in line with the code as one of the priorities.
 
 Then propose a **slug**: the product name in lowercase kebab-case (`Addon Manager` → `addon-manager`). Confirm it with the user. It must not match an existing folder in `products/`.
 
@@ -108,10 +116,11 @@ products/<slug>/
    ## Current Status
    - **Phase:** [current phase from the execution plan]
    - **Next milestone:** [from the interview]
+   - **Latest commit:** [hash and date of the commit the inspection read, and how it stands against the remote: level with `origin/main`, N commits behind, uncommitted changes]
    - **Last updated:** [today's date]
    ```
 
-   *Started* is when work on the product began, not when it entered the brain. For existing code it is the date of the first commit, or the date the user gives if there is no git history. For a new product it is today's date. Leave out the *Added to this brain* line when both dates are the same.
+   *Started* is when work on the product began, not when it entered the brain. For existing code it is the date of the first commit, or the date the user gives if there is no git history. For a new product it is today's date. Leave out the *Added to this brain* line when both dates are the same. Leave out *Latest commit* when there is no code yet.
 
    `/wrap-up` keeps *Current Status* up to date.
 
@@ -134,6 +143,16 @@ products/<slug>/
    If code already exists, the plan starts with the work that is done: `completed` phases and steps reconstructed from the git history and the inspection, with the commits they come from. Say in the plan that they are reconstructed and that their effort values are estimates. The open work follows, planned as above. Say so in the summary.
 
 3. **Product-level docs** (`MVP-Scope.md`, `Feature-Priorities.md`, `User-Stories.md`) — Parent line `> Part of [Product Name](README.md)`. Derived from the interview and the inspection: the milestone defines the MVP scope, the priorities seed the feature list, the target users seed the stories. Cross-link them (`MVP-Scope.md` ↔ `Feature-Priorities.md` ↔ `User-Stories.md`).
+
+   The findings of the docs check go into `Feature-Priorities.md`, in a section *Findings in the Docs*. Say which commit was checked and what was not checked, then one row per finding:
+
+   ```markdown
+   | # | File | It says | The code says | Since |
+   |---|------|---------|---------------|-------|
+   | 1 | `README.md`, setup | Port 8080 | `docker-compose.yml` maps 8181 | `a1b2c3d`, 2026-06-17 |
+   ```
+
+   *Since* is the commit that made the doc wrong, when the history shows it. Leave the section out when the check found nothing, and say so in the summary.
 
 4. **Folder indexes** (`features/README.md`, `engineering/README.md`, `operations/README.md`, `handoffs/README.md`, `engineering/adr/README.md`) — Parent line pointing to the product README (the ADR index points to `engineering/README.md`). Describe what the folder covers and link every file in it. `features/README.md` starts with an empty *Index* list; `/feature` adds specs there.
 

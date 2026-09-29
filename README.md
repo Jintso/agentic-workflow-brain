@@ -15,7 +15,7 @@ Ten **Claude Code slash commands** plus a folder convention. Together they give 
 | Command | What it does |
 |---------|-------------|
 | `/init-brain` | Interactive wizard. Creates the shared structure and the first product. |
-| `/add-product` | Reads the product's code if it exists, interviews you about the rest, and generates its self-contained folder. |
+| `/add-product` | Reads the product's code if it exists, checks its docs against it, interviews you about the rest, and generates its self-contained folder. |
 | `/resume [product]` | Loads context, shows progress, recommends what to work on. |
 | `/wrap-up` | Captures session work, writes a handoff, updates the execution plan. |
 | `/status [product\|all]` | Portfolio dashboard across products, or a deep dive on one. |
