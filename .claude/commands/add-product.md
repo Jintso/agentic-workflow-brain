@@ -26,6 +26,8 @@ If the code location is a directory this session can read, inspect it before the
 
 Read only. Nothing in the code repository changes in this phase.
 
+**Never copy a secret into the brain**, whatever the source: operations files, docs, memory. Passwords, tokens and keys are secrets, and so is a recipe for reaching a machine (a user, a host and a key path together). Record only that such access exists and where it is documented. Read an `.env` file for the names of its variables, not their values.
+
 **First, compare the clone with its remote.** The inspection describes the clone on disk. If it is behind, the brain describes an older state. Check before reading anything else, without fetching:
 
 - `git status --short --branch` shows the branch, uncommitted changes, and how far the branch was ahead or behind at the last fetch.
@@ -37,10 +39,15 @@ If the clone is behind, or holds uncommitted or unpushed work, say so and ask ho
 2. **The docs against the code.** Docs fall behind the code, and the brain must not copy what is no longer true. Check the claims a reader acts on against the code at the commit you read: commands to build, run and deploy; file and folder names; configuration keys, ports and versions; listed features and scripts; the architecture described. Where they disagree, the code is right: write the brain's files from the code, and record the claim as a finding (Phase 2, `Feature-Priorities.md`). You need not check every line, but say in the summary what was checked and what was not.
 3. **The history.** `git log`: the date of the first commit, the date of the latest one, and the tags. The first commit dates the start of the product. The log shows what is already done.
 4. **Public or private, and other clones.** `git remote -v` shows where the repository is published. Find out whether it is public, for example with `gh repo view --json visibility`. Then look for clones on other machines: authors in `git log` other than the user, such as an agent's commits; docs or deploy scripts that clone the repo onto a server; notes about resuming on another PC. If you cannot tell, ask in the interview. Phase 3 depends on both answers.
-5. **Operations.** CI configuration, container files, deployment scripts. Never copy a secret into the brain.
+5. **Operations.** CI configuration, container files, deployment scripts.
 6. **Claude Code entry points.** List the repository root and its `.claude/` folder with `ls -la`. A listing of regular files hides symlinks. Note `CLAUDE.md`, `CLAUDE.local.md`, commands and settings files, and where each symlink points. Project rules in `CLAUDE.md` are a source for `engineering/Conventions.md`.
 7. **Work tracked in the repo.** A repo may already track its own work: `TODO.md`, `HANDOFF.md`, `ROADMAP.md`, a `plans/` or `docs/handoff/` folder, issues on the forge, and commands or skills that write them. For each, note what it holds, when it last changed (`git log -1 -- <path>`), and who reads it: people, a CI job, an agent working in another clone, a session on a machine without this brain. A record that something outside this machine reads is a reason for the repo to keep leading (question 8).
-8. **Per-project memory.** Claude Code keeps memory per working directory under `~/.claude/projects/`, in a folder named after the code location with every `/` replaced by `-`, the leading one included: `/home/me/code/app` → `~/.claude/projects/-home-me-code-app/memory/`. Note what it says about the project. If the session is not allowed to read that folder, say so in the summary and give the user the path to check.
+8. **Per-project memory.** Claude Code keeps memory per working directory under `~/.claude/projects/`, in a folder named after the code location with every `/` replaced by `-`, the leading one included: `/home/me/code/app` → `~/.claude/projects/-home-me-code-app/memory/`. If the session is not allowed to read that folder, say so in the summary and give the user the path to check. Sort every entry:
+   - **A fact about this project:** a source for the brain. Check it against the code like the docs (item 2).
+   - **Open work:** treat it like the repo's tracking files (item 7). It is still open only if the code and the log do not show it done.
+   - **No longer true:** list it for the user with a proposed edit (Phase 3, step 6).
+   - **About another product, or the whole machine:** not copied into this product's folder. Name it in the summary: it belongs to that product, or to `company/`.
+   - **Access to a machine or a service:** not copied (see above). Note that it exists.
 
 **A legacy vault is a case for `/migrate`.** If the repository holds a vault in the original layout (a `BRAIN-INDEX.md` with no `products/` beside it, numbered folders such as `00_Company/`), or if its `CLAUDE.md` or `.claude/commands` is a symlink into one, say so and point the user to `/migrate <path to the vault>`, which imports the vault and moves the repository onto this brain. Continue here only if the user wants a fresh product folder anyway.
 
@@ -215,6 +222,7 @@ If the answer to question 8 is that the repo leads, the repo's files stay the wo
 
    When the repo leads (question 8), the last sentence names the repo's own steps too, in their order: for example "Start with `/resume <slug>`, then `/pickup`. End with `/wrapup`, then `/wrap-up`."
 5. If the brain leads (question 8) and the user chose to change the repo's tracking files, make those changes now, under the same rules as step 4: ask first and name the files, check for symlinks, do not commit. Carry every open item into the brain before a file becomes a pointer.
+6. If the per-project memory holds entries that are no longer true, or open work that the brain now tracks, propose an edit for each: a correction, a removal, or a line pointing at the brain. Memory lies outside both the brain and the repo, so change a file only after the user agrees to that edit.
 
 ## Phase 4: Verify and Summarise
 
