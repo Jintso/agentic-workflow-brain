@@ -36,7 +36,7 @@ If the clone is behind, or holds uncommitted or unpushed work, say so and ask ho
 1. **The project.** The README, the build manifest (`package.json`, `Cargo.toml`, `pyproject.toml` or similar) and the top-level layout. They give the name, the description, the target users, the stack and the architecture.
 2. **The docs against the code.** Docs fall behind the code, and the brain must not copy what is no longer true. Check the claims a reader acts on against the code at the commit you read: commands to build, run and deploy; file and folder names; configuration keys, ports and versions; listed features and scripts; the architecture described. Where they disagree, the code is right: write the brain's files from the code, and record the claim as a finding (Phase 2, `Feature-Priorities.md`). You need not check every line, but say in the summary what was checked and what was not.
 3. **The history.** `git log`: the date of the first commit, the date of the latest one, and the tags. The first commit dates the start of the product. The log shows what is already done.
-4. **Public or private.** `git remote -v` shows where the repository is published. Find out whether it is public, for example with `gh repo view --json visibility`. If you cannot tell, ask in the interview. Phase 3 depends on the answer.
+4. **Public or private, and other clones.** `git remote -v` shows where the repository is published. Find out whether it is public, for example with `gh repo view --json visibility`. Then look for clones on other machines: authors in `git log` other than the user, such as an agent's commits; docs or deploy scripts that clone the repo onto a server; notes about resuming on another PC. If you cannot tell, ask in the interview. Phase 3 depends on both answers.
 5. **Operations.** CI configuration, container files, deployment scripts. Never copy a secret into the brain.
 6. **Claude Code entry points.** List the repository root and its `.claude/` folder with `ls -la`. A listing of regular files hides symlinks. Note `CLAUDE.md`, `CLAUDE.local.md`, commands and settings files, and where each symlink points. Project rules in `CLAUDE.md` are a source for `engineering/Conventions.md`.
 7. **Work tracked in the repo.** A repo may already track its own work: `TODO.md`, `HANDOFF.md`, `ROADMAP.md`, a `plans/` or `docs/handoff/` folder, issues on the forge, and commands or skills that write them. For each, note what it holds, when it last changed (`git log -1 -- <path>`), and who reads it: people, a CI job, an agent working in another clone, a session on a machine without this brain. A record that something outside this machine reads is a reason for the repo to keep leading (question 8).
@@ -186,14 +186,14 @@ If the answer to question 8 is that the repo leads, the repo's files stay the wo
 1. Add a row to the table in `products/README.md`: `| [Name](<slug>/README.md) | status | Phase N — Name | — | code location |`. The phase is the current one from the execution plan: Phase 1 for a new product.
 2. Add a bullet under *Products* in `BRAIN-INDEX.md`: `- [Name](products/<slug>/README.md) — one-liner — **status**, Phase N`
 3. If `company/Vision.md` lists products, add this one.
-4. If the code lives in its own repository, offer to add a *Brain* section to it. The section lets a session started there find the brain even when the brain's `CLAUDE.md` is not loaded. It holds absolute paths on this machine, so where it goes depends on who can see the repository:
+4. If the code lives in its own repository, offer to add a *Brain* section to it. The section lets a session started there find the brain even when the brain's `CLAUDE.md` is not loaded. It holds absolute paths on this machine, so where it goes depends on where the repository is cloned. A clone where the brain does not exist would be pointed at a brain it cannot reach, whether a person, a second machine or an agent works in it:
 
    | File | Use it when | Effect |
    |------|-------------|--------|
-   | `CLAUDE.local.md`, listed in the repo's `.gitignore` | The repository is public, or people work in it who do not use this brain | Stays on this machine. Nothing is published |
-   | `CLAUDE.md` | The repository is private, and everyone who works in it uses this brain at the same path | Committed with the repo. Loads for everyone who clones it |
+   | `CLAUDE.local.md`, listed in the repo's `.gitignore` | Any clone lives where this brain is not: the repository is public; someone works in it without this brain; it is cloned on a server, another PC, or for an agent | Stays in this clone. Nothing is published, and other clones see nothing |
+   | `CLAUDE.md` | The repository is private, and every clone of it is used with this brain at the same path, typically one user on one machine | Committed with the repo. Loads in every clone |
 
-   Claude Code loads both files from the working directory. Recommend one and say why. If you do not know whether the repository is public, ask.
+   Claude Code loads both files from the working directory. Recommend one and say why, naming the clones you found. If you do not know whether the repository is public or where else it is cloned, ask.
 
    **Ask before editing the code repo**, and say which files change. Then:
 

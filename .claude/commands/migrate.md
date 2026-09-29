@@ -28,6 +28,7 @@ A legacy vault usually sits inside the product's code repository, often as `brai
 2. **Product-specific commands.** In the vault's `.claude/commands/`, a command is product-specific when the brain root's `.claude/commands/` has no command of that name. The rest are old brain commands, which the brain's own replace.
 3. **Hooks and permission rules.** Note where `.claude/settings.json` and `.claude/settings.local.json` live, and any hook whose command uses a path inside the vault.
 4. **Per-project memory.** Claude Code keeps memory per working directory under `~/.claude/projects/`, in a folder named after the code location with every `/` replaced by `-`, the leading one included: `/home/me/code/app` → `~/.claude/projects/-home-me-code-app/memory/`. Note memory files that mention vault paths, wikilinks or the old command locations. If the session is not allowed to read that folder, say so in the report and give the user the path to check.
+5. **Public or private, and other clones.** As in `/add-product` Phase 1, *Inspect the Code Location*, item 4. Step 5 decides from this where the *Brain* section goes.
 
 If the vault stands alone, skip this part and Step 5.
 
@@ -83,7 +84,8 @@ Show the user what Step 1 found and what you propose for each item below. **Ask 
 1. **`CLAUDE.md`.** If the repository's root `CLAUDE.md` is a symlink into the vault, or carries the vault's session protocol, replace it with a real file:
    - **Keep** the project facts and every project-specific rule.
    - **Drop** the old session protocol and the wikilink and vault-layout rules.
-   - **Add** the *Brain* section from `/add-product` Phase 3, plus one line saying the vault folder is a legacy vault, superseded on today's date, that is not to be read for session context or written to.
+   - **Add** one line saying the vault folder is a legacy vault, superseded on today's date, that is not to be read for session context or written to.
+   - **Add** the *Brain* section from `/add-product` Phase 3, step 4, to the file its table chooses. It holds absolute paths on this machine: if any clone lives where this brain is not, including a public repository, it goes into `CLAUDE.local.md` with an entry in `.gitignore`, and the committed `CLAUDE.md` gets no local path. Recommend one and say why.
 2. **Product-specific commands.** They belong in the code repository's `.claude/commands/` as real files, so they load when a session starts there. If that path is a symlink into the vault, replace the symlink with a real folder holding only the product-specific commands. Fix paths inside them that point into the vault. If there is no code repository, put them in `.claude/commands/<slug>/` at the brain root, which makes them `/<slug>:<name>`.
 3. **Hooks and permission rules.** Leave settings files that already sit in the code repository's own `.claude/` where they are: they load when a session starts there. If they sit inside the vault, or a hook uses a path inside the vault, propose the corrected version.
 4. **Per-project memory.** It keeps loading in sessions started in the code repository. Propose edits to the files noted in Step 1 so they name the new locations. They lie outside both directories, so the user has to approve each edit.

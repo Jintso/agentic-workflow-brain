@@ -83,7 +83,7 @@ Claude Code treats the working directory and an attached directory differently, 
 
 Started this way, the code repo's hooks, permission rules and `CLAUDE.md` all apply, the brain's commands are available, and the environment variable brings in the brain's `CLAUDE.md`. `/resume` with no argument picks the product whose code location is the working directory.
 
-The commands find the brain on their own: every brain path is relative to the **brain root**, the directory holding `BRAIN-INDEX.md` and `products/`, wherever it is attached. `/add-product` also offers to add a short *Brain* section to the code repo, so a session finds the brain even without the environment variable. The section holds paths on your machine. In a private repo it goes into `CLAUDE.md`. In a public one it goes into `CLAUDE.local.md`, which is added to `.gitignore`, so the paths are not published.
+The commands find the brain on their own: every brain path is relative to the **brain root**, the directory holding `BRAIN-INDEX.md` and `products/`, wherever it is attached. `/add-product` also offers to add a short *Brain* section to the code repo, so a session finds the brain even without the environment variable. The section holds paths on your machine. If the repo is cloned anywhere the brain is not (it is public, or cloned on a server, another PC, or for an agent), the section goes into `CLAUDE.local.md`, which is added to `.gitignore`, so the paths are neither published nor pushed to the other clones. Only a private repo used on this one machine gets it in `CLAUDE.md`.
 
 **A repo that tracks its own work.** If a repo already keeps `TODO.md`, `HANDOFF.md` or plan files, `/add-product` asks which place leads from now on, since two lists of open work drift apart. Usually the brain takes over. When something that cannot see the brain reads the repo's record, such as an agent working in a clone on another machine, the repo keeps leading: the product folder then holds the milestone, the priorities and short handoffs that point at the repo's resume point, and `/resume`, `/wrap-up` and `/feature` defer to the repo.
 
@@ -184,7 +184,7 @@ It copies the vault into `products/<slug>/`, renames folder indexes to `README.m
 
 A legacy vault usually sits inside the product's code repository, with `CLAUDE.md` and `.claude/commands` at the repository root symlinked into it. `/migrate` finds those and, after asking, moves the repository onto the brain:
 
-- `CLAUDE.md` becomes a real file that keeps the project's own rules and points at the brain
+- `CLAUDE.md` becomes a real file that keeps the project's own rules. The pointer to the brain goes into it, or into `CLAUDE.local.md` when the repo is public or cloned elsewhere
 - product-specific slash commands move into the repository's own `.claude/commands/`
 - hooks and permission rules stay where they are, since they load when a session starts in the repository
 - per-project memory that mentions the old vault is updated

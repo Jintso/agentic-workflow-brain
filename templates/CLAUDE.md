@@ -111,7 +111,7 @@ A code repo's hooks, permission rules and `CLAUDE.md` load only when it is the w
 
 **Portfolio work: start in the brain.** `/status all`, `/sprint all`, `/sync`, `/add-product`, `/migrate` and `/init-brain` need no code repo.
 
-A code repo should carry a short *Brain* section naming the brain root and the product slug, so a session finds the brain even when this file is not loaded. It goes into the repo's `CLAUDE.md`, or into `CLAUDE.local.md` with an entry in `.gitignore` when the repo is public, since the section holds local paths. `/add-product` offers to add it.
+A code repo should carry a short *Brain* section naming the brain root and the product slug, so a session finds the brain even when this file is not loaded. The section holds local paths, so it goes into `CLAUDE.local.md` with an entry in `.gitignore` whenever a clone of the repo lives where the brain is not: a public repo, a clone on another machine, an agent's clone. Only a private repo used on this one machine gets it in `CLAUDE.md`. `/add-product` offers to add it.
 
 ## Rules
 
