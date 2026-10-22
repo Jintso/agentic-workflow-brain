@@ -51,6 +51,8 @@ Three concrete next actions across the portfolio, each with a one-line why. If t
 
 ### 📊 Execution Plan Progress
 
+A finished phase moved to `Execution-Plan-Archive.md` counts from its one-line entry in the plan (`completed`, its step count); don't open the archive for it.
+
 ```
 Phase 1: [Name]     [========--]  80%  (4/5)   ← in_progress
 Phase 2: [Name]     [===-------]  30%  (3/10)  ← in_progress

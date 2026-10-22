@@ -80,6 +80,7 @@ Create `products/<slug>/` with this structure. Every file gets **real content fr
 products/<slug>/
   README.md               Product index
   Execution-Plan.md       Phased roadmap
+  Execution-Plan-Archive.md  Finished phases, moved out whole
   MVP-Scope.md            What the first shippable version includes and excludes
   Feature-Priorities.md   Ranked feature list, linking to specs in features/
   User-Stories.md         Who needs what, and why
@@ -118,6 +119,7 @@ products/<slug>/
 
    ## Quick Links
    - [Execution Plan](Execution-Plan.md) — roadmap and task status
+   - [Execution Plan Archive](Execution-Plan-Archive.md) — finished phases and status history, moved out unchanged
    - [MVP Scope](MVP-Scope.md) — what ships first, and what doesn't
    - [Feature Priorities](Feature-Priorities.md) — ranked features and their specs
    - [User Stories](User-Stories.md) — who needs what, and why
@@ -135,7 +137,9 @@ products/<slug>/
 
    *Started* is when work on the product began, not when it entered the brain. For existing code it is the date of the first commit, or the date the user gives if there is no git history. For a new product it is today's date. Leave out the *Added to this brain* line when both dates are the same. Leave out *Latest commit* when there is no code yet.
 
-   `/wrap-up` keeps *Current Status* up to date.
+   *Current Status* holds the present only: `/wrap-up` replaces it at each session's end and never appends a session's story, which is the handoff's (`CLAUDE.md`, *File Conventions*, *Content*).
+
+   Also create **Execution-Plan-Archive.md**: the parent line `> Part of [Product Name](README.md)`, the title `# Execution Plan Archive`, and the line "Finished phases move here whole, and the live plan keeps one line for each. Nothing is archived yet."
 
 2. **Execution-Plan.md** — Parent line `> Part of [Product Name](README.md)`. Generate 3–4 phases with 3–5 steps each from the priorities and the milestone. Use the step format from `CLAUDE.md`:
 
@@ -194,7 +198,7 @@ If the answer to question 8 is that the repo leads, the repo's files stay the wo
 
 ## Phase 3: Register the Product
 
-1. Add a row to the table in `products/README.md`: `| [Name](<slug>/README.md) | status | Phase N — Name | — | code location |`. The phase is the current one from the execution plan: Phase 1 for a new product.
+1. Add a row to the table in `products/README.md`: `| [Name](<slug>/README.md) | status | Phase N — Name | — | code location |`. The phase is the current one from the execution plan: Phase 1 for a new product. Write a code location on this machine as a path in backticks (`` `~/code/addon-manager` ``): `scripts/check-claude-md.sh` finds the repo's `CLAUDE.md` from it.
 2. Add a bullet under *Products* in `BRAIN-INDEX.md`: `- [Name](products/<slug>/README.md) — one-liner — **status**, Phase N`
 3. If `company/Vision.md` lists products, add this one.
 4. If the code lives in its own repository, offer to add a *Brain* section to it. The section lets a session started there find the brain even when the brain's `CLAUDE.md` is not loaded. It holds absolute paths on this machine, so where it goes depends on where the repository is cloned. A clone where the brain does not exist would be pointed at a brain it cannot reach, whether a person, a second machine or an agent works in it:

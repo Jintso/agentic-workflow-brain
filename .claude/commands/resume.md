@@ -39,7 +39,7 @@ Present a clear, scannable briefing:
 If no handoff exists: "This is the first working session for this product."
 
 **Progress:**
-Show each phase with a text progress bar and fraction:
+Show each phase with a text progress bar and fraction. A finished phase moved to `Execution-Plan-Archive.md` has a one-line entry in the plan with its step count; show it as complete from that line, without opening the archive:
 ```
 Phase 1: Foundation    [========--]  80%  (4/5 steps)
 Phase 2: Core Build    [===-------]  30%  (3/10 steps)

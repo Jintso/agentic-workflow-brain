@@ -9,11 +9,13 @@ set -euo pipefail
 #
 # Copies:
 #   .claude/commands/*.md   → <brain>/.claude/commands/   always overwritten (these are the tool)
-#   scripts/check-links.sh  → <brain>/scripts/            always overwritten
+#   scripts/*.sh            → <brain>/scripts/            always overwritten
 #   templates/*.md          → <brain>/templates/          only files that don't exist yet
 #   templates/CLAUDE.md     → <brain>/CLAUDE.md           only if missing
 #
-# Re-run it to upgrade the commands without touching your content.
+# Re-run it to upgrade the commands and scripts without touching your content.
+# A kept CLAUDE.md or template may lack what the new commands expect: see
+# README.md, Upgrading.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BRAIN_DIR="${1:-.}"
@@ -40,13 +42,16 @@ done
 
 # Scripts
 mkdir -p "$BRAIN_DIR/scripts"
-cp "$SCRIPT_DIR/scripts/check-links.sh" "$BRAIN_DIR/scripts/"
-chmod +x "$BRAIN_DIR/scripts/check-links.sh"
 echo ""
 echo "Scripts:"
-echo "  ✅ scripts/check-links.sh"
+for script_file in "$SCRIPT_DIR"/scripts/*.sh; do
+    cp "$script_file" "$BRAIN_DIR/scripts/"
+    chmod +x "$BRAIN_DIR/scripts/$(basename "$script_file")"
+    echo "  ✅ scripts/$(basename "$script_file")"
+done
 
 # Templates (never overwrite the user's edits)
+KEPT=0
 mkdir -p "$BRAIN_DIR/templates"
 echo ""
 echo "Templates:"
@@ -55,6 +60,7 @@ for tmpl_file in "$SCRIPT_DIR"/templates/*.md; do
     [ "$name" = "CLAUDE.md" ] && continue
     if [ -e "$BRAIN_DIR/templates/$name" ]; then
         echo "  ⏭  templates/$name (exists, kept)"
+        cmp -s "$tmpl_file" "$BRAIN_DIR/templates/$name" || KEPT=1
     else
         cp "$tmpl_file" "$BRAIN_DIR/templates/$name"
         echo "  ✅ templates/$name"
@@ -65,6 +71,7 @@ done
 echo ""
 if [ -f "$BRAIN_DIR/CLAUDE.md" ]; then
     echo "  ⏭  CLAUDE.md (exists, kept)"
+    cmp -s "$SCRIPT_DIR/templates/CLAUDE.md" "$BRAIN_DIR/CLAUDE.md" || KEPT=1
 else
     cp "$SCRIPT_DIR/templates/CLAUDE.md" "$BRAIN_DIR/CLAUDE.md"
     echo "  ✅ CLAUDE.md placed at the brain root; /init-brain fills in the placeholders"
@@ -74,6 +81,11 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "✅ Done. $INSTALLED commands installed."
 echo ""
+if [ "$KEPT" -eq 1 ]; then
+    echo "Upgrading? Your CLAUDE.md and templates were kept, and the new commands may"
+    echo "cite sections they lack. Merge what's new: see Upgrading in $SCRIPT_DIR/README.md"
+    echo ""
+fi
 echo "Next steps:"
 echo "  cd $BRAIN_DIR"
 echo "  claude"

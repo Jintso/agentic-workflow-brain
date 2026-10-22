@@ -24,6 +24,8 @@ Review this conversation. Identify:
 - Mark new blockers `blocked` with the reason
 - Check off completed tasks inside steps
 - Add steps that emerged during the session
+- When a phase's last step completes, move the whole phase to `Execution-Plan-Archive.md` and leave its one-line entry (`CLAUDE.md`, *Execution Plan Format*). A product without the archive gets one as `/add-product` Phase 2 creates it, listed under *Quick Links*
+- Don't add a paragraph about the session: the handoff is its record
 
 ### Department files
 Update whatever the session made outdated:
@@ -34,8 +36,10 @@ Update whatever the session made outdated:
 - Infra, CI/CD, monitoring → the matching file in `operations/`
 
 ### Product status
-- In `products/<slug>/README.md`, update *Current Status*: phase, next milestone, last updated.
-- In `products/README.md`, update the product's row: status, phase, last session date.
+Replace these, never append to them. They hold the present only (`CLAUDE.md`, *File Conventions*, *Content*):
+- In `products/<slug>/README.md`, *Current Status*: the phase and each in-progress step in a line, the latest handoff, *Next*, the next milestone, last updated. A session's story goes in its handoff, not here.
+- In `products/README.md`, the product's row: status, phase in a short phrase, last session date.
+- In `BRAIN-INDEX.md`, the product's line: what it is in a sentence, its status and phase.
 
 ### New files
 Every new file needs a parent line (`> Part of [Parent](path.md)`) and an entry in its folder's `README.md`.
@@ -43,6 +47,8 @@ Every new file needs a parent line (`> Part of [Parent](path.md)`) and an entry 
 ## Step 3: Create the Handoff
 
 If the product README says the repo leads (a section *Where Work Is Tracked*), the repo's own wrap-up writes the session record. Check that it has run, and ask the user to run it first if not. Then write the short handoff that `products/<slug>/handoffs/README.md` describes: it points at the repo's resume point and does not repeat it.
+
+Run `<brain root>/scripts/session-times.sh` for the session's times and copy its `Handoff:` line into **Time:**. Times are measured, never estimated (`CLAUDE.md`, *Organisation-Wide Conventions*). If the script finds no transcript, write `not recorded`. Any other time in the handoff, such as when a task or job started and ended, comes from a `date` stamp or a recorded timestamp.
 
 Next number = highest existing `handoff-NNN.md` in `products/<slug>/handoffs/` plus one, zero-padded to three digits. Create `products/<slug>/handoffs/handoff-NNN.md` following `templates/Handoff-Template.md`:
 
@@ -52,7 +58,7 @@ Next number = highest existing `handoff-NNN.md` in `products/<slug>/handoffs/` p
 # Session Handoff — NNN
 
 **Date:** YYYY-MM-DD
-**Duration:** [approximate session length]
+**Time:** [the `Handoff:` line of `scripts/session-times.sh`]
 **Focus:** [one-line summary of what this session was about]
 
 ## What Was Done

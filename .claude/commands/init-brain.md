@@ -41,7 +41,7 @@ products/
   - *Company*: link to `company/README.md` with a one-line description
   - *Products*: one bullet per product (link, one-liner, status, current phase). Empty until Phase 3.
   - *Shared*: link to `templates/README.md`
-- **CLAUDE.md** — Copy `templates/CLAUDE.md` and fill in every `[PLACEHOLDER]`. If `CLAUDE.md` already exists (the installer may have placed it), fill in its placeholders instead of overwriting it.
+- **CLAUDE.md** — The installer placed it at the brain root from its own `templates/CLAUDE.md`; it is not copied into the brain's `templates/`. Fill in every `[PLACEHOLDER]` and leave the rest as it is. In *Organisation-Wide Conventions*, keep the two standing conventions and replace the `[FILL IN]` line with the organisation's own standards, or delete it. If `CLAUDE.md` is missing, ask the user to re-run `install.sh` against the brain root, which places it.
 - **company/README.md** — Folder index: what lives here, links to `Vision.md` and `Values.md`. Parent line: `> Part of [Brain Index](../BRAIN-INDEX.md)`.
 - **company/Vision.md** — The one-sentence answer expanded into a short vision statement: what is built, for whom, why it matters, and how the products relate to each other. Parent line: `> Part of [Company](README.md)`.
 - **company/Values.md** — The stated principles, each with one line on what it means in practice. If the user skipped this, write a short note that values are not yet defined and link to the vision. Parent line: `> Part of [Company](README.md)`.
@@ -64,7 +64,7 @@ Now follow `.claude/commands/add-product.md` from its Phase 1 for the product na
 
 ## Phase 4: Verify and Summarise
 
-1. Run `scripts/check-links.sh` and fix anything it reports.
+1. Run `scripts/check-links.sh` and `scripts/check-claude-md.sh`, and fix anything they report. A fix in the code repo's `CLAUDE.md` waits for the user's agreement.
 2. Show the full tree of created files and the file count.
 3. Tell the user the brain works in any markdown editor or forge; the links between files are what make it navigable.
 4. Suggest `/resume <slug>` to start the first working session.
