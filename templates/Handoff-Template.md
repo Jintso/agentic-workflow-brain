@@ -3,7 +3,7 @@
 # Session Handoff — NNN
 
 **Date:** YYYY-MM-DD
-**Duration:** [approximate]
+**Time:** [the `Handoff:` line of `scripts/session-times.sh`: start → end, duration, time in Claude's turns. Measured, never estimated]
 **Focus:** [one-line summary]
 
 ## What Was Done

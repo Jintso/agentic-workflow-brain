@@ -44,9 +44,9 @@ The old `00_Company/` folder describes one product, not an organisation with sev
 
 | Old | New (`products/<slug>/`) |
 |-----|--------------------------|
-| `BRAIN-INDEX.md` | `README.md` — rewrite as a product index (see `/add-product` Phase 2) using its *Current Status* section. `**Code:**` is the code location from Step 1, and *Latest commit* the commit Step 1 read |
+| `BRAIN-INDEX.md` | `README.md` — rewrite as a product index (see `/add-product` Phase 2) using its *Current Status* section, which keeps the present only: its history goes to the *Status history* of `Execution-Plan-Archive.md`. `**Code:**` is the code location from Step 1, and *Latest commit* the commit Step 1 read |
 | `CLAUDE.md` | not copied; copy its project-specific rules (coding conventions, packaging, design, workflow) into `engineering/Conventions.md`. Step 5 handles the code repository's own `CLAUDE.md` |
-| `Execution-Plan.md` | `Execution-Plan.md` |
+| `Execution-Plan.md` | `Execution-Plan.md`, without its history: each phase whose steps are all `completed` moves whole to a new `Execution-Plan-Archive.md` and leaves its one-line entry (`CLAUDE.md`, *Execution Plan Format*), and session paragraphs go to the archive's *Session log*. Create the archive as `/add-product` Phase 2 does, even with nothing to move, and list it under *Quick Links* |
 | `00_Company/Company.md` | not copied; fold its overview into `README.md` |
 | `00_Company/Vision.md`, `Values.md` | same names at the product root, listed under *Quick Links* in `README.md` |
 | `01_Engineering/Engineering.md` | `engineering/README.md` |

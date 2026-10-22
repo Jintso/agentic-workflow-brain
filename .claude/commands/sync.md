@@ -20,6 +20,8 @@ Run the link checker (see *Brain Root*). It is deterministic and reports five ki
 
 Fix everything mechanical without asking, then re-run until it reports clean.
 
+Then run `<brain root>/scripts/check-claude-md.sh <brain root>`. It reports each path the brain's `CLAUDE.md` or a product's code-repo `CLAUDE.md` names that no longer exists (`MISSING`), and a code location with no `CLAUDE.md` (`NO-FILE`). Find where the file went and propose the corrected pointer, or the pointer's removal. A code repo's `CLAUDE.md` changes only after the user agrees, so list these fixes and ask; fix the brain's own without asking.
+
 ## Step 2: Structural Checks
 
 ### Root
@@ -38,6 +40,8 @@ Fix everything mechanical without asking, then re-run until it reports clean.
 
 ### Execution plan drift
 Compare `Execution-Plan.md` against the last three handoffs:
+- A phase with every step `completed` still in the live plan? Move it whole to `Execution-Plan-Archive.md` and leave its one-line entry (`CLAUDE.md`, *Execution Plan Format*). A product without the archive gets one as `/add-product` Phase 2 creates it, listed under *Quick Links*.
+- Session paragraphs in the plan, or a *Current Status* that retells sessions? Move them to the archive's *Session log* or *Status history*; the handoffs are the record.
 - Completed steps still marked `not_started` or `in_progress`?
 - Steps marked `in_progress` with no recent handoff mentioning them?
 - Task checkboxes inconsistent with step statuses?

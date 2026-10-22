@@ -8,6 +8,7 @@ Ten **Claude Code slash commands** plus a folder convention. Together they give 
 
 - **One brain, many products.** Shared context (vision, values) lives once. Each product gets a self-contained folder with its own roadmap, architecture, decisions and session history.
 - **Continuity through handoffs.** Every session ends with a handoff document. Every session starts by reading the latest one.
+- **Built for long sessions.** `CLAUDE.md` is a short map whose *Compact Instructions* tell a compaction what to keep: decisions, open items, and references copied exactly. A product's status holds only the present, and finished phases move to an archive, so `/resume` reads what matters now.
 - **Plain markdown, standard links.** Files link with ordinary relative links, so the brain renders on GitHub, in VS Code, in Obsidian, Logseq, Foam, or `less`. A dependency-free shell script verifies the links.
 
 ## Commands
@@ -17,12 +18,12 @@ Ten **Claude Code slash commands** plus a folder convention. Together they give 
 | `/init-brain` | Interactive wizard. Creates the shared structure and the first product. |
 | `/add-product` | Reads the product's code if it exists, checks its docs against it, interviews you about the rest, and generates its self-contained folder. |
 | `/resume [product]` | Loads context, shows progress, recommends what to work on. |
-| `/wrap-up` | Captures session work, writes a handoff, updates the execution plan. |
+| `/wrap-up` | Captures session work, writes a handoff with the session's measured times, updates the execution plan, replaces the product's status. |
 | `/status [product\|all]` | Portfolio dashboard across products, or a deep dive on one. |
 | `/plan [product] <step>` | Breaks an execution plan step into concrete tasks. |
 | `/sprint [product\|all]` | Plans a week of work with daily themes and effort estimates. |
 | `/feature [product] <name>` | Full feature lifecycle: spec, plan, implement, update brain. |
-| `/sync` | Audits brain health, runs the link checker, repairs what it can. |
+| `/sync` | Audits brain health, runs the link and `CLAUDE.md` path checks, repairs what it can. |
 | `/migrate <path>` | Imports a vault made with the original single-product layout. |
 
 Commands that act on one product pick it from the argument, from the conversation so far, from the working directory when it is a product's code location, or automatically when only one exists. Otherwise they list the products and ask.
@@ -46,10 +47,21 @@ This copies into the brain directory:
 
 - 10 slash commands → `.claude/commands/`
 - Templates → `templates/`
-- The link checker → `scripts/check-links.sh`
+- Three scripts → `scripts/`: the link checker, the `CLAUDE.md` path check, and the session clock
 - `CLAUDE.md`, if none exists
 
-Re-running the installer upgrades the commands and script and leaves your templates and `CLAUDE.md` alone.
+Re-running the installer upgrades the commands and scripts and leaves your templates and `CLAUDE.md` alone.
+
+### Upgrading
+
+Pull this repo and re-run `./install.sh /path/to/your/brain`. The commands and scripts are replaced. Your `CLAUDE.md` and templates are kept, since they hold your own text, so they may lack a section the new commands cite. The installer says so when one of them differs from the version it ships. Merge the new parts in by hand, or ask Claude in the brain:
+
+```
+Compare CLAUDE.md with <this repo>/templates/CLAUDE.md, and templates/ with <this repo>/templates/.
+Merge in what's new and keep my organisation's text. Show me the diff before saving.
+```
+
+Then run `/sync`.
 
 ### Create Your Brain
 
@@ -137,6 +149,7 @@ products/
   addon-manager/              One self-contained folder per product
     README.md                 Product index: description, code location, current status
     Execution-Plan.md         Phased roadmap with step statuses and task checklists
+    Execution-Plan-Archive.md Finished phases, moved out whole, and status history
     MVP-Scope.md              What ships first, and what doesn't
     Feature-Priorities.md     Ranked features, linking to their specs
     User-Stories.md           Who needs what, and why
@@ -149,12 +162,12 @@ products/
     ...
 
 templates/                    Shared templates for handoffs, ADRs, feature specs
-scripts/check-links.sh        Structural integrity check
+scripts/                      check-links.sh, check-claude-md.sh, session-times.sh
 ```
 
 ## Conventions
 
-These are what make the brain navigable by both people and agents. `CLAUDE.md` carries them, and `scripts/check-links.sh` enforces them.
+These are what make the brain navigable by both people and agents. `CLAUDE.md` carries them, and the two check scripts enforce the structural ones.
 
 - **Relative markdown links only.** `[Architecture](engineering/Architecture.md)`, never `[[Architecture]]`. Paths are relative to the file that contains them.
 - **Every file has a parent line.** The first line of every file except `BRAIN-INDEX.md` and `CLAUDE.md` is `> Part of [Parent](path.md)`.
@@ -162,6 +175,9 @@ These are what make the brain navigable by both people and agents. `CLAUDE.md` c
 - **Products are self-contained.** Nothing in `products/a/` links into `products/b/`. Shared material goes in `company/`. A product folder can be archived or moved out without breaking anything.
 - **Code is referenced, not linked.** `src/main.rs` in backticks. The code is not part of the brain.
 - **Naming:** folders lowercase kebab-case, documents PascalCase with hyphens, handoffs and ADRs numbered per product.
+- **Status is the present only.** A product's *Current Status*, its portfolio row and its index line are replaced at each `/wrap-up`, never appended to. A phase whose steps are all done moves whole to `Execution-Plan-Archive.md` and leaves one line in the plan. The handoffs are the record of each session.
+- **Times are measured, never estimated.** A start, end or duration comes from `date` stamps written at the time, or from a recorded timestamp: a commit, a log line, the session transcript. `scripts/session-times.sh` reads a session's start, end and time inside Claude's turns from Claude Code's local transcript, and `/wrap-up` copies its line into the handoff. The transcript format isn't a public interface, so if the script finds nothing, the handoff says `not recorded`. It needs GNU `date`: on macOS, `brew install coreutils`.
+- **A `CLAUDE.md` is a map,** the brain's and every code repo's: inline only the rules that hold on every action and the *Compact Instructions*, everything else a one-line pointer to the file that holds it, and no copied status or counts.
 
 ## Verifying the Brain
 
@@ -171,6 +187,12 @@ scripts/check-links.sh ~/brain    # or point it somewhere
 ```
 
 It scans `BRAIN-INDEX.md`, `company/` and `products/` and reports broken links, leftover wikilinks, files without a parent line, orphans nothing links to, and cross-product links. Fenced code blocks and inline code are skipped, so a file can show an example link. Exit code 1 on issues, so it works as a pre-commit hook or CI step for the brain repo. `/sync` and `/wrap-up` run it for you.
+
+```bash
+scripts/check-claude-md.sh        # from the brain root
+```
+
+It reads the brain's `CLAUDE.md` and the `CLAUDE.md` at every product's code location (the *Code* column of `products/README.md`), and reports each path in backticks that no longer exists, so a pointer doesn't outlive the file it points to. Placeholders, commands, URLs and git-ignored paths are skipped. `/sync` runs it.
 
 ## Migrating From previous version, obsidian-brain
 

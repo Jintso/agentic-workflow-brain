@@ -4,6 +4,8 @@
 > A session started in a product's code repo loads it when the brain is attached and `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` is set.
 > It tells Claude how to work inside this brain.
 
+This file is a map. Each section says in a few lines what it covers. The rules that hold for every brain edit are written here; everything else is a pointer that says when to read which file.
+
 ## What This Directory Is
 
 A **brain**: a folder of plain markdown files holding long-term memory for one organisation and every product it builds. Claude reads it at the start of a session and updates it at the end, so nothing is lost between sessions.
@@ -18,13 +20,26 @@ The **brain root** is the directory that holds this file, `BRAIN-INDEX.md` and `
 
 - The brain root is either the working directory or a directory attached with `--add-dir`. Find it before reading or writing any brain file.
 - A `BRAIN-INDEX.md` with no `products/` folder beside it is a legacy vault, not the brain. Leave it alone.
-- Run the link checker as `<brain root>/scripts/check-links.sh <brain root>`.
+- Run the link checker as `<brain root>/scripts/check-links.sh <brain root>`, and the path check of every `CLAUDE.md` as `<brain root>/scripts/check-claude-md.sh <brain root>`.
 
 ## Session Protocol
 
-1. **Start:** read `BRAIN-INDEX.md`, resolve the product (below), then read that product's `README.md`, `Execution-Plan.md` and the latest file in its `handoffs/`. `/resume` does this.
-2. **End:** run `/wrap-up` to write a handoff and update the execution plan.
+1. **Start:** read `BRAIN-INDEX.md`, resolve the product (below), then read that product's `README.md`, `Execution-Plan.md` and the latest file in its `handoffs/`. `/resume` does this. `Execution-Plan-Archive.md` is history: open it only when a question needs the past.
+2. **End:** run `/wrap-up` to write a handoff, update the execution plan and replace the product's status.
 3. **Never assume context** from a previous conversation. Read the files.
+
+## Compact Instructions
+
+When the conversation is compacted (by `/compact` or automatically), the summary keeps:
+
+- **Where we are:** the product slug, the brain root, the code repo and its branch or worktree, and the Execution Plan step and task in hand.
+- **Decisions:** every decision made this session, the user's words quoted where given, who decided, and the alternatives turned down. `/wrap-up` writes them into the handoff.
+- **Open items:** questions waiting on the user, blockers, and the next action promised.
+- **References, copied exactly:** commit hashes, PR and issue numbers, changed file paths, and measured numbers (test results, counts, costs, the `date` stamps of tasks in flight).
+- **Corrections:** anything the user corrected or ruled out, so it isn't proposed again.
+- **Templates and formats in use, by path** (`templates/Handoff-Template.md`, *Execution Plan Format* below), not their text. Re-read them after compaction.
+
+It drops tool output, file contents that can be re-read, and dead ends, keeping one line per dead end saying why it failed.
 
 ## Product Resolution
 
@@ -38,26 +53,30 @@ Most commands act on one product. Resolve it in this order:
 
 Never guess silently between two products.
 
-## Layout
+## Where Things Are
+
+- `BRAIN-INDEX.md`: the entry point, one line per top folder and per product. Read it at the start of every session.
+- `products/README.md`: one row per product with its status, phase, last session and code location. Read it to resolve a product.
+- `products/<slug>/README.md`: the product's map: what it is, where its code lives, its current status and next steps, and a link to every file in its folder. Read it first for any work on the product.
+- `company/README.md`: the vision, the values in `company/Values.md`, and cross-product sprints. Read it when a decision weighs the values or spans products.
+- `templates/README.md`: the handoff, ADR and feature-spec templates. Create those files from them.
+- `scripts/`: `check-links.sh` (the link graph), `check-claude-md.sh` (the paths each `CLAUDE.md` names), `session-times.sh` (a session's measured times). `/sync` runs the first two.
+
+Every product folder has the same shape, so a new file's place is never a guess:
 
 ```
-BRAIN-INDEX.md              Entry point
-CLAUDE.md                   This file
-company/                    Shared context: vision, values, cross-product sprints
-products/README.md          Portfolio index (one row per product)
-products/<slug>/            One self-contained folder per product
-  README.md                 Product index: description, code location, current status
-  Execution-Plan.md         Phased roadmap with step statuses
-  MVP-Scope.md              What ships first, and what doesn't
-  Feature-Priorities.md     Ranked features, linking to specs
-  User-Stories.md           Who needs what, and why
-  features/                 Feature specs
-  engineering/              Architecture, tech stack, conventions, plans, adr/
-  operations/               Environments, CI/CD, monitoring
-  handoffs/                 handoff-NNN.md session records, sprint plans
-  assets/                   Non-markdown files (optional)
-templates/                  Shared templates
-scripts/                    check-links.sh
+products/<slug>/
+  README.md                  The product's map and its current status
+  Execution-Plan.md          The current and coming phases, with step statuses
+  Execution-Plan-Archive.md  Finished phases, the old session log and status history
+  MVP-Scope.md               What ships first, and what doesn't
+  Feature-Priorities.md      Ranked features, linking to specs
+  User-Stories.md            Who needs what, and why
+  features/                  Feature specs
+  engineering/               Architecture, tech stack, conventions, plans, adr/
+  operations/                Environments, CI/CD, monitoring
+  handoffs/                  handoff-NNN.md session records, sprint plans
+  assets/                    Non-markdown files (optional)
 ```
 
 ## File Conventions
@@ -79,6 +98,11 @@ scripts/                    check-links.sh
 - Feature specs: `features/Feature-<Name>.md`.
 - Implementation plans: `engineering/Plan-<Step-Name>.md`.
 
+### Content
+- **A summary under the title.** A document's first paragraph says in a sentence or two what it holds, and its folder's `README.md` reuses that line as its entry, so the index repeats the document instead of describing it a second time.
+- **Templates:** a handoff, an ADR or a feature spec starts from its template in `templates/`.
+- **Status is the present only.** A product README's *Current Status*, its row in `products/README.md` and its line in `BRAIN-INDEX.md` are replaced at each `/wrap-up`, never appended to. A session's record is its handoff.
+
 ## Execution Plan Format
 
 ```markdown
@@ -96,6 +120,8 @@ scripts/                    check-links.sh
 - `completed` — all tasks done and verified
 - `blocked` — cannot proceed; reason documented
 
+A phase whose steps are all `completed` moves whole to `Execution-Plan-Archive.md`, and the live plan keeps one line for it: `## Phase N: [Name] — completed YYYY-MM-DD, S/S steps ([archive](Execution-Plan-Archive.md#…))`. Sessions aren't logged in the plan: the handoff is their record.
+
 ## Code Location
 
 Each product README states where its code lives (`**Code:**`). Implementation happens there, not in the brain.
@@ -107,7 +133,7 @@ cd /path/to/code
 CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir /path/to/brain
 ```
 
-A code repo's hooks, permission rules and `CLAUDE.md` load only when it is the working directory. The brain's slash commands load from an attached directory. This file loads from an attached directory only when the environment variable is set.
+A code repo's hooks, permission rules and `CLAUDE.md` load only when it is the working directory. The brain's slash commands load from an attached directory, and this file loads from one only when the environment variable is set; it then also reaches every subagent the session starts. A product whose main session delegates to subagents can leave the variable off: the brain's commands read this file themselves when it isn't loaded.
 
 **Portfolio work: start in the brain.** `/status all`, `/sprint all`, `/sync`, `/add-product`, `/migrate` and `/init-brain` need no code repo.
 
@@ -115,13 +141,28 @@ A code repo should carry a short *Brain* section naming the brain root and the p
 
 ## Rules
 
-- **Don't delete brain files** without asking. Mark them deprecated instead.
+- **Don't delete brain files** without asking. Mark them deprecated, or move finished material to the product's archive.
 - **Update the execution plan** whenever work completes.
 - **Create ADRs** for significant technical decisions.
 - **Never skip `/wrap-up`**, even after a short session.
 - **Keep product folders self-contained** so a product can be moved out or archived without breaking links.
 - **Reference files by path** so the reader can open them.
+- **Fork only when the work needs this conversation.** A fork (the Agent tool's `fork`) copies the whole conversation and re-reads it on every turn. A brief that stands on its own goes to a fresh agent, `general-purpose` or a named one, which starts from its own instructions.
 
 ## Organisation-Wide Conventions
 
-[FILL IN: standards that apply to every product, or "none yet". Product-specific conventions live in each product's engineering/Conventions.md]
+The values in `company/Values.md` guide decisions in every product. Product-specific conventions live in each product's `engineering/Conventions.md`. Beyond the values:
+
+- **Times are measured, never estimated.** Every start, end and duration written anywhere — a handoff, a runbook, a plan, a report, an agent's brief — comes from a clock:
+  - `date '+%F %T %Z'` when a task starts and again when it ends, written down at the time. A brief handed to an agent asks it to stamp its own start and end the same way.
+  - Or a recorded timestamp: the session transcript, a commit, a forge event, a log line.
+  - A session's times come from `scripts/session-times.sh`, which reads its transcript. `/wrap-up` copies its `Handoff:` line.
+  - A duration is the difference between two such times. A time nobody stamped is written `not recorded`, never guessed.
+  - Forecasts stay forecasts: a step's *Effort* size and `/sprint`'s capacity are plans, not records.
+- **A `CLAUDE.md` is a map.** This one and every code repo's:
+  - **Sections:** each opens with a few lines on what it covers.
+  - **Inline:** only the rules that hold on every action, and the *Compact Instructions*, since a compaction sees only what is in context.
+  - **Everything else is a one-line pointer** that says when to read its file. A pointer from a code repo names only files its readers may open: if the repo's agents can't read the brain, it points into the repo only.
+  - **No copies:** no status, counts or versions, which the files it points to keep current, and no session history, which the handoffs keep.
+  - `scripts/check-claude-md.sh` reports any path a `CLAUDE.md` names that no longer exists.
+- [FILL IN: the organisation's own standards for every product, one bullet each, or delete this line]
