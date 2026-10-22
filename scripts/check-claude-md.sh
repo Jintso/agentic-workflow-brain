@@ -3,14 +3,16 @@
 #
 # A CLAUDE.md is a map (CLAUDE.md, Organisation-Wide Conventions), and a map's
 # pointers rot when files move. This checks the brain's own CLAUDE.md and the
-# CLAUDE.md at every product's code location: a path in the Code column of
-# products/README.md that starts with ~ or /, in backticks or bare (a URL or
-# "not started" isn't a location on this machine). Each backticked token outside
-# a fenced block that looks like a path is checked:
+# CLAUDE.md and CLAUDE.local.md at every product's code location: a path in the
+# Code column of products/README.md that starts with ~ or /, in backticks or bare
+# (a URL or "not started" isn't a location on this machine). A repo may have
+# either file or both: its Brain section goes into CLAUDE.local.md when a clone
+# lives where the brain is not. Each backticked token outside a fenced block
+# that looks like a path is checked:
 #
 #   repo path   its first part is a file or folder at the repo's root
 #               (src/, docs/adr/README.md, .claude/agents/)
-#   brain path  in a code repo's CLAUDE.md, it starts with products/, company/
+#   brain path  in a code repo's file, it starts with products/, company/
 #               or templates/, and is checked against the brain root
 #
 # Skipped, as not checkable or not the repo's: home and absolute paths, URLs,
@@ -69,11 +71,13 @@ out=$(
         sed 's/^[[:space:]]*//; s/[[:space:]]*$//' <<<"$cell"
       fi
     done | grep -E '^(~|/)' | sed "s|^~|$HOME|" | while IFS= read -r repo; do
-      if [ -f "$repo/CLAUDE.md" ]; then
-        check "$repo/CLAUDE.md" "$repo" repo
-      else
-        echo "NO-FILE  $repo/CLAUDE.md"
-      fi
+      found=0
+      for name in CLAUDE.md CLAUDE.local.md; do
+        [ -f "$repo/$name" ] || continue
+        check "$repo/$name" "$repo" repo
+        found=1
+      done
+      [ "$found" -eq 1 ] || echo "NO-FILE  $repo: no CLAUDE.md or CLAUDE.local.md"
     done
 )
 

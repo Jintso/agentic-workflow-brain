@@ -91,7 +91,7 @@ products/<slug>/
 - `scripts/check-links.sh` verifies all of this. `/sync` runs it.
 
 ### Naming
-- Folders: lowercase kebab-case (`products/addon-manager/`, `engineering/`).
+- Folders: lowercase kebab-case (`addon-manager/`, `engineering/`).
 - Documents: PascalCase with hyphens (`Tech-Stack.md`, `Feature-Priorities.md`).
 - Handoffs: `handoff-001.md`, numbered per product.
 - ADRs: `ADR-001-short-topic.md`, numbered per product.

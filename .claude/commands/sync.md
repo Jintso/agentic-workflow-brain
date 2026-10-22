@@ -20,7 +20,7 @@ Run the link checker (see *Brain Root*). It is deterministic and reports five ki
 
 Fix everything mechanical without asking, then re-run until it reports clean.
 
-Then run `<brain root>/scripts/check-claude-md.sh <brain root>`. It reports each path the brain's `CLAUDE.md` or a product's code-repo `CLAUDE.md` names that no longer exists (`MISSING`), and a code location with no `CLAUDE.md` (`NO-FILE`). Find where the file went and propose the corrected pointer, or the pointer's removal. A code repo's `CLAUDE.md` changes only after the user agrees, so list these fixes and ask; fix the brain's own without asking.
+Then run `<brain root>/scripts/check-claude-md.sh <brain root>`. It reports each path the brain's `CLAUDE.md` or a product's code-repo `CLAUDE.md` or `CLAUDE.local.md` names that no longer exists (`MISSING`), and a code location with neither file (`NO-FILE`). Find where the file went and propose the corrected pointer, or the pointer's removal. A code repo's `CLAUDE.md` or `CLAUDE.local.md` changes only after the user agrees, so list these fixes and ask; fix the brain's own without asking.
 
 ## Step 2: Structural Checks
 
