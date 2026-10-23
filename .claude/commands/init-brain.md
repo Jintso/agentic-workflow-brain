@@ -64,7 +64,7 @@ Now follow `.claude/commands/add-product.md` from its Phase 1 for the product na
 
 ## Phase 4: Verify and Summarise
 
-1. Run `scripts/check-links.sh` and `scripts/check-claude-md.sh`, and fix anything they report. A fix in the code repo's `CLAUDE.md` waits for the user's agreement.
+1. Run `scripts/check-links.sh` and `scripts/check-claude-md.sh`, and fix anything they report. A fix to any file in the code repo, such as `CLAUDE.md` or `CLAUDE.local.md`, waits for the user's agreement.
 2. Show the full tree of created files and the file count.
 3. Tell the user the brain works in any markdown editor or forge; the links between files are what make it navigable.
 4. Suggest `/resume <slug>` to start the first working session.

@@ -192,7 +192,7 @@ It scans `BRAIN-INDEX.md`, `company/` and `products/` and reports broken links, 
 scripts/check-claude-md.sh        # from the brain root
 ```
 
-It reads the brain's `CLAUDE.md` and the `CLAUDE.md` at every product's code location (the *Code* column of `products/README.md`), and reports each path in backticks that no longer exists, so a pointer doesn't outlive the file it points to. Placeholders, commands, URLs and git-ignored paths are skipped. `/sync` runs it.
+It reads the files Claude Code loads as project memory (`CLAUDE.md`, `CLAUDE.local.md`, `.claude/CLAUDE.md`) in the brain and at every product's code location (the *Code* column of `products/README.md`), and reports each path in backticks that no longer exists, so a pointer doesn't outlive the file it points to. It also reports a symlinked file whose target is gone, a code location with none of the files, and one that isn't on this machine. Placeholders, commands, URLs, examples (after "for example" or "e.g." on their line) and git-ignored paths are skipped. `/sync` runs it.
 
 ## Migrating From previous version, obsidian-brain
 

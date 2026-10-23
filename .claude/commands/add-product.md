@@ -198,7 +198,7 @@ If the answer to question 8 is that the repo leads, the repo's files stay the wo
 
 ## Phase 3: Register the Product
 
-1. Add a row to the table in `products/README.md`: `| [Name](<slug>/README.md) | status | Phase N — Name | — | code location |`. The phase is the current one from the execution plan: Phase 1 for a new product. Write a code location on this machine as a path in backticks (`` `~/code/addon-manager` ``): `scripts/check-claude-md.sh` finds the repo's `CLAUDE.md` from it.
+1. Add a row to the table in `products/README.md`: `| [Name](<slug>/README.md) | status | Phase N — Name | — | code location |`. The phase is the current one from the execution plan: Phase 1 for a new product. Write a code location on this machine as a path in backticks (`` `~/code/addon-manager` ``): `scripts/check-claude-md.sh` finds the repo's `CLAUDE.md`, `CLAUDE.local.md` and `.claude/CLAUDE.md` from it.
 2. Add a bullet under *Products* in `BRAIN-INDEX.md`: `- [Name](products/<slug>/README.md) — one-liner — **status**, Phase N`
 3. If `company/Vision.md` lists products, add this one.
 4. If the code lives in its own repository, offer to add a *Brain* section to it. The section lets a session started there find the brain even when the brain's `CLAUDE.md` is not loaded. It holds absolute paths on this machine, so where it goes depends on where the repository is cloned. A clone where the brain does not exist would be pointed at a brain it cannot reach, whether a person, a second machine or an agent works in it:

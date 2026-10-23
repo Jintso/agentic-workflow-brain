@@ -20,7 +20,16 @@ Run the link checker (see *Brain Root*). It is deterministic and reports five ki
 
 Fix everything mechanical without asking, then re-run until it reports clean.
 
-Then run `<brain root>/scripts/check-claude-md.sh <brain root>`. It reports each path the brain's `CLAUDE.md` or a product's code-repo `CLAUDE.md` or `CLAUDE.local.md` names that no longer exists (`MISSING`), and a code location with neither file (`NO-FILE`). Find where the file went and propose the corrected pointer, or the pointer's removal. A code repo's `CLAUDE.md` or `CLAUDE.local.md` changes only after the user agrees, so list these fixes and ask; fix the brain's own without asking.
+Then run `<brain root>/scripts/check-claude-md.sh <brain root>`. It reads the files Claude Code loads as project memory, `CLAUDE.md`, `CLAUDE.local.md` and `.claude/CLAUDE.md`, in the brain and at each product's code location, and reports four kinds of issue:
+
+| Code | Meaning | Fix |
+|------|---------|-----|
+| `MISSING` | A path one of the files names no longer exists | Find where the file went and propose the corrected pointer, or the pointer's removal. If the path is an example, not a pointer, put "for example" before it on its line: the checker skips what follows. |
+| `DANGLING` | One of the files is a symlink whose target is gone | Say where it pointed. Propose a real file in its place, or the symlink's removal. |
+| `NO-FILE` | A code location has none of the files | Offer the repo the *Brain* section from `/add-product` Phase 3, step 4. |
+| `NO-REPO` | A code location in `products/README.md` is not a folder on this machine | Find where the repo went and correct the *Code* column and the product's `README.md`. If it isn't on this machine, ask. |
+
+A file in a code repo changes only after the user agrees, so list those fixes and ask; fix the brain's own without asking.
 
 ## Step 2: Structural Checks
 
