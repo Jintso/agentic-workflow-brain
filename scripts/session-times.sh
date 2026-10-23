@@ -5,7 +5,8 @@
 # Conventions). This prints:
 #
 #   Start     the first timestamp in the session's transcript
-#   End       the clock now
+#   End       the clock now, for the session running this shell; for any other
+#             session, its transcript's last record
 #   Duration  End minus Start, wall clock
 #   Turns     the time inside Claude's completed turns: the union of the
 #             transcript's turn_duration intervals (the turn running this
@@ -57,7 +58,15 @@ if [ -z "$first" ]; then
 fi
 
 start_s=$("$DATE" -d "$first" +%s)
-end_s=$("$DATE" +%s)
+if [ "$id" = "${CLAUDE_CODE_SESSION_ID:-}" ]; then
+  end_s=$("$DATE" +%s)
+else  # a past session, or one running elsewhere: the clock now would be the wrong end
+  # Its last record, leaving out the file-history snapshots Claude Code writes after the
+  # conversation's last message, sometimes minutes later.
+  last=$(grep -v '^{"type":"file-history-snapshot"' "$transcript" | grep -o '"timestamp":"[^"]*"' \
+    | cut -d'"' -f4 | sort | tail -n 1)
+  end_s=$("$DATE" -d "$last" +%s)
+fi
 
 # Each turn_duration record closes a turn: [its timestamp - durationMs, its timestamp].
 # Turns can overlap or nest (a message queued behind a running turn, a turn that waits
