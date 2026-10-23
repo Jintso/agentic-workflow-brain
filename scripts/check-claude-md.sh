@@ -16,8 +16,9 @@
 #   brain path  in a code repo's file, it starts with products/, company/
 #               or templates/, and is checked against the brain root. If the
 #               repo has a folder of that name too, either place will do.
-#   local path  in a CLAUDE.local.md, it starts with ~/ or /. That file holds
-#               paths on this machine, such as the Brain section's brain root.
+#   local path  in a CLAUDE.local.md, it starts with ~/, or with / and has a
+#               second / (/wrap-up is a command). That file holds paths on
+#               this machine, such as the Brain section's brain root.
 #
 # Skipped, as not checkable or not the repo's: home and absolute paths in any
 # other file (a committed file may name paths on other machines), URLs,
@@ -63,7 +64,7 @@ check() {  # $1 CLAUDE.md, $2 the root its paths are relative to, $3 "repo" or "
         *) continue ;;
       esac
       if [[ "$tok" == [~/]* ]]; then
-        [ "${file##*/}" = CLAUDE.local.md ] && [[ "$tok" != '~'[!/]* ]] || continue
+        [ "${file##*/}" = CLAUDE.local.md ] && [[ "$tok" == '~/'* || "$tok" == /*/* ]] || continue
         [ -e "${tok/#\~\//$HOME/}" ] || echo "MISSING  $file:$n  $tok"
         continue
       fi
