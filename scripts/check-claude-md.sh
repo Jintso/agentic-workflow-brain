@@ -16,8 +16,11 @@
 #   brain path  in a code repo's file, it starts with products/, company/
 #               or templates/, and is checked against the brain root. If the
 #               repo has a folder of that name too, either place will do.
+#   local path  in a CLAUDE.local.md, it starts with ~/ or /. That file holds
+#               paths on this machine, such as the Brain section's brain root.
 #
-# Skipped, as not checkable or not the repo's: home and absolute paths, URLs,
+# Skipped, as not checkable or not the repo's: home and absolute paths in any
+# other file (a committed file may name paths on other machines), URLs,
 # tokens with spaces (commands), globs and placeholders (* < > … $ { ( ? #),
 # bare file names, tokens whose first part isn't at the root (origin/main),
 # examples (tokens after "for example" or "e.g." on their line), and missing
@@ -55,10 +58,15 @@ check() {  # $1 CLAUDE.md, $2 the root its paths are relative to, $3 "repo" or "
   while IFS=$'\t' read -r n line; do
     grep -o '`[^`]*`' <<<"$line" | sed 's/^`//; s/`$//' | while IFS= read -r tok; do
       case "$tok" in
-        ''|*' '*|*'*'*|*'<'*|*'>'*|*'…'*|*'$'*|*'{'*|*'('*|*'?'*|*'#'*|*'://'*|'~'*|/*|-*) continue ;;
+        ''|*' '*|*'*'*|*'<'*|*'>'*|*'…'*|*'$'*|*'{'*|*'('*|*'?'*|*'#'*|*'://'*|-*) continue ;;
         */*) ;;
         *) continue ;;
       esac
+      if [[ "$tok" == [~/]* ]]; then
+        [ "${file##*/}" = CLAUDE.local.md ] && [[ "$tok" != '~'[!/]* ]] || continue
+        [ -e "${tok/#\~\//$HOME/}" ] || echo "MISSING  $file:$n  $tok"
+        continue
+      fi
       local path="${tok%/}" first="${tok%%/*}" bases=() base
       [ -e "$root/$first" ] && bases+=("$root")
       [ "$kind" = repo ] && [[ "$tok" =~ ^(products|company|templates)/ ]] && bases+=("$brain")
