@@ -8,10 +8,17 @@
 #   End       the clock now, for the session running this shell; for any other
 #             session, its transcript's last record
 #   Duration  End minus Start, wall clock
-#   Turns     the time inside Claude's completed turns: the union of the
-#             transcript's turn_duration intervals (the turn running this
-#             script isn't one yet). It includes a turn's waits on agents
-#             or on the user's answer, so it isn't pure working time.
+#   Turns     the time inside Claude's turns, as the union of their intervals.
+#             A turn runs from its first record (the prompt, or the agent's or
+#             peer's message that started it, marked turnOrigin) to the
+#             turn_duration record that closes it. A turn with no closing record
+#             yet, such as the one running this script, counts up to End, and
+#             the line says so. It includes a turn's waits on agents or on the
+#             user's answer, so it isn't pure working time.
+#             turn_duration's own durationMs counts only where no turnOrigin
+#             record comes before it (a transcript older than that field): it
+#             can count from an earlier turn's start. One turn of four minutes
+#             recorded 547, back to a prompt nine hours before it.
 #   Handoff   the same as one line for a handoff's **Time:** field
 #
 # Usage:
@@ -68,18 +75,35 @@ else  # a past session, or one running elsewhere: the clock now would be the wro
   end_s=$("$DATE" -d "$last" +%s)
 fi
 
-# Each turn_duration record closes a turn: [its timestamp - durationMs, its timestamp].
-# Turns can overlap or nest (a message queued behind a running turn, a turn that waits
-# on background agents), so the time inside turns is the union of those intervals.
-records=$(grep '"subtype":"turn_duration"' "$transcript")
+# The records that start a turn (turnOrigin, with its turnIndex) and close one
+# (turn_duration, with durationMs), in the transcript's order. A turn's later records
+# (a message queued into it) carry the same turnIndex, so it starts at the first.
+# Each closing record closes the turn started last; one with no such turn falls back to
+# [its timestamp - durationMs, its timestamp]. Turns can still overlap, so the time
+# inside them is the union of the intervals.
+records=$(grep -e '"subtype":"turn_duration"' -e '"turnOrigin"' "$transcript")
 turns=0
 turn_s=0
+running=0
 if [ -n "$records" ]; then
-  turns=$(printf '%s\n' "$records" | wc -l)
-  turn_s=$(paste \
-      <(printf '%s\n' "$records" | grep -o '"timestamp":"[^"]*"' | cut -d'"' -f4 | "$DATE" -f - +%s) \
-      <(printf '%s\n' "$records" | grep -o '"durationMs":[0-9]*' | cut -d: -f2) \
-    | awk '{ printf "%.3f %.3f\n", $1 - $2 / 1000, $1 }' | sort -n \
+  turns=$(printf '%s\n' "$records" | grep -c '"subtype":"turn_duration"')
+  intervals=$(paste \
+      <(printf '%s\n' "$records" | awk '{ print (index($0, "\"subtype\":\"turn_duration\"") ? "C" : "O") }') \
+      <(printf '%s\n' "$records" \
+        | awk 'match($0, /"timestamp":"[^"]*"/) { print substr($0, RSTART + 13, RLENGTH - 14) }' \
+        | "$DATE" -f - +%s.%3N) \
+      <(printf '%s\n' "$records" \
+        | awk '{ if (match($0, /"durationMs":[0-9]+/)) print substr($0, RSTART + 13, RLENGTH - 13)
+                 else if (match($0, /"turnIndex":[0-9]+/)) print substr($0, RSTART + 12, RLENGTH - 12)
+                 else print "-" }') \
+    | awk -v end="$end_s" '
+        $1 == "O" { if ($3 == "-") start = $2; else { if (!($3 in first)) first[$3] = $2; start = first[$3] }
+                    open = 1; next }
+        open      { printf "%.3f %.3f\n", start, $2; open = 0; next }
+                  { printf "%.3f %.3f\n", $2 - $3 / 1000, $2 }
+        END       { if (open) printf "%.3f %.3f running\n", start, end }')
+  case "$intervals" in *running) running=1 ;; esac
+  turn_s=$(printf '%s\n' "$intervals" | sort -n \
     | awk 'NR == 1 { s = $1; e = $2; next }
            $1 > e { t += e - s; s = $1; e = $2; next }
            $2 > e { e = $2 }
@@ -99,5 +123,11 @@ in_turns=$(span "$turn_s")
 echo "Start:    $start"
 echo "End:      $end"
 echo "Duration: $duration"
-echo "Turns:    $in_turns inside $turns completed turns"
-echo "Handoff:  **Time:** $start → $end: $duration, $in_turns of it inside Claude's $turns turns (\`scripts/session-times.sh\`)"
+if [ "$running" = 1 ]; then
+  if [ "$id" = "${CLAUDE_CODE_SESSION_ID:-}" ]; then upto="the clock"; else upto="its last record"; fi
+  echo "Turns:    $in_turns inside $turns completed turns and the running one, counted up to $upto"
+  echo "Handoff:  **Time:** $start → $end: $duration, $in_turns of it inside Claude's $turns turns and the running one (\`scripts/session-times.sh\`)"
+else
+  echo "Turns:    $in_turns inside $turns completed turns"
+  echo "Handoff:  **Time:** $start → $end: $duration, $in_turns of it inside Claude's $turns turns (\`scripts/session-times.sh\`)"
+fi
