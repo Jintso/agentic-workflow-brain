@@ -103,14 +103,26 @@ Add to the *Index* list in `products/<slug>/handoffs/README.md`:
 
 Run the link checker (see *Brain Root*). Fix everything it reports before finishing. New files usually need a parent line and an index entry.
 
-## Step 6: Session Summary
+## Step 6: Commit and Push
+
+Running `/wrap-up` is the user's go-ahead to commit and push the brain. Don't stop to ask.
+
+- **Stage only this session's files,** by explicit path, never with `git add -A` or `.`. Commit them with a message that names the handoff.
+- **Another session may have the brain open** (its uncommitted files show in `git status`). Leave its files alone and commit only your own paths (`git commit -- <paths>`). Hold the push until that session has committed, then push, which carries its commit too. Say in the summary that the push is waiting, and on what.
+- **If the push is refused** because the remote moved, pull with `--rebase` and push again. Never force.
+- **If the brain isn't a git repository** or has no remote, say so in the summary instead.
+
+A code repo the session touched follows its own rules for commits.
+
+## Step 7: Session Summary
 
 Show the user:
 1. Product(s) touched and the number of brain files created/modified
 2. Execution plan changes (steps completed, status changes)
 3. Handoff file path
-4. Top recommendation for next session
-5. "Your brain is updated. Run `/resume <slug>` next time to pick up where we left off."
+4. The brain commit, and whether it is pushed
+5. Top recommendation for next session
+6. "Your brain is updated. Run `/resume <slug>` next time to pick up where we left off."
 
 ## Important Behaviors
 
@@ -118,4 +130,4 @@ Show the user:
 - **Never skip the execution plan update.** It is what makes `/resume` work.
 - **Write for a reader who has never seen this conversation.**
 - **Short or exploratory session?** Still write a handoff. Even a brief one keeps the chain intact.
-- **Brain-only maintenance session that touched no product?** Say so, skip the handoff, still run the link checker.
+- **Brain-only maintenance session that touched no product?** Say so, skip the handoff, still run the link checker, then commit and push.
