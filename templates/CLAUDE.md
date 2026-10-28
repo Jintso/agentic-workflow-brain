@@ -25,7 +25,7 @@ The **brain root** is the directory that holds this file, `BRAIN-INDEX.md` and `
 ## Session Protocol
 
 1. **Start:** read `BRAIN-INDEX.md`, resolve the product (below), then read that product's `README.md`, `Execution-Plan.md` and the latest file in its `handoffs/`. `/resume` does this. `Execution-Plan-Archive.md` is history: open it only when a question needs the past.
-2. **End:** run `/wrap-up` to write a handoff, update the execution plan and replace the product's status.
+2. **End:** run `/wrap-up` to write a handoff, update the execution plan and replace the product's status, then commit and push the brain.
 3. **Never assume context** from a previous conversation. Read the files.
 
 ## Compact Instructions
