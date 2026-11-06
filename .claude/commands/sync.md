@@ -67,7 +67,7 @@ Files with fewer than three lines of real content, excluding the parent line and
 **Fix:** flag them and ask whether to fill in or remove.
 
 ### Handoff chain integrity
-Handoffs are numbered sequentially per product with no gaps, and the latest one reflects the actual state.
+Handoffs are numbered sequentially per product with no gaps, and the latest one reflects the actual state. The same holds for the brain's own handoffs in `company/handoffs/`, each listed in `company/handoffs/README.md`, which `company/README.md` links.
 **Fix:** flag gaps. Never generate missing handoffs.
 
 ## Output Format
