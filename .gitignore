@@ -1,7 +1,5 @@
-node_modules/
 .DS_Store
 *.swp
 *.swo
 *~
-ClaudeBrain/
 CLAUDE.local.md
