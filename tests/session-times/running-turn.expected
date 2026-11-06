@@ -1,6 +1,6 @@
 Start:    2026-11-06 10:00:00 UTC
 End:      2026-11-06 11:20:00 UTC
 Duration: 1 h 20 min
-Turns:    30 min inside 1 completed turns and the running one, counted up to its last record
-Handoff:  **Time:** 2026-11-06 10:00:00 UTC → 2026-11-06 11:20:00 UTC: 1 h 20 min, 30 min of it inside Claude's 1 turns and the running one (`scripts/session-times.sh`)
+Turns:    30 min inside 1 completed turn and the running one, counted up to its last record
+Handoff:  **Time:** 2026-11-06 10:00:00 UTC → 2026-11-06 11:20:00 UTC: 1 h 20 min, 30 min of it inside Claude's 1 turn and the running one (`scripts/session-times.sh`)
 exit 0

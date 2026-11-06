@@ -131,14 +131,21 @@ end=$("$DATE" -d "@$end_s" '+%F %T %Z')
 duration=$(span $(( end_s - start_s )))
 in_turns=$(span "$turn_s")
 
+if [ "$turns" = 1 ]; then counted="1 turn"; else counted="$turns turns"; fi
+
 echo "Start:    $start"
 echo "End:      $end"
 echo "Duration: $duration"
 if [ "$running" = 1 ]; then
   if [ "$id" = "${CLAUDE_CODE_SESSION_ID:-}" ]; then upto="the clock"; else upto="its last record"; fi
-  echo "Turns:    $in_turns inside $turns completed turns and the running one, counted up to $upto"
-  echo "Handoff:  **Time:** $start → $end: $duration, $in_turns of it inside Claude's $turns turns and the running one (\`scripts/session-times.sh\`)"
+  if [ "$turns" = 0 ]; then  # the session's first turn
+    echo "Turns:    $in_turns inside the running turn, counted up to $upto"
+    echo "Handoff:  **Time:** $start → $end: $duration, $in_turns of it inside Claude's running turn (\`scripts/session-times.sh\`)"
+  else
+    echo "Turns:    $in_turns inside ${counted/turn/completed turn} and the running one, counted up to $upto"
+    echo "Handoff:  **Time:** $start → $end: $duration, $in_turns of it inside Claude's $counted and the running one (\`scripts/session-times.sh\`)"
+  fi
 else
-  echo "Turns:    $in_turns inside $turns completed turns"
-  echo "Handoff:  **Time:** $start → $end: $duration, $in_turns of it inside Claude's $turns turns (\`scripts/session-times.sh\`)"
+  echo "Turns:    $in_turns inside ${counted/turn/completed turn}"
+  echo "Handoff:  **Time:** $start → $end: $duration, $in_turns of it inside Claude's $counted (\`scripts/session-times.sh\`)"
 fi
