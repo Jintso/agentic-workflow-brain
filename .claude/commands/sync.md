@@ -10,7 +10,7 @@ In a brain kept in git, commit the brain files this command wrote when it finish
 
 ## Step 1: Run the Link Checker
 
-Run the link checker (see *Brain Root*). It is deterministic and reports five kinds of issue:
+Run the link checker (see *Brain Root*). It is deterministic and reports six kinds of issue:
 
 | Code | Meaning | Fix |
 |------|---------|-----|
@@ -19,6 +19,7 @@ Run the link checker (see *Brain Root*). It is deterministic and reports five ki
 | `NO-PARENT` | File lacks a `> Part of [...](...)` first line | Add it, pointing at the folder's `README.md` (or the product README for `Execution-Plan.md`). |
 | `ORPHAN` | No other file links to this one | Add it to its folder's `README.md`. |
 | `CROSS-PRODUCT` | A file in one product links into another product | Move the shared material to `company/` and link there from both, or drop the link. |
+| `MERGE` | The installer's merge of `CLAUDE.md` or a template is left beside it as `<file>.merge`, with conflicts marked | Show each conflict and propose a resolution that keeps the brain's own text and takes the template's new rule. Once the user agrees, write the result over the file and delete the `.merge`. A `.merge` with no conflicts left only needs that last step: ask before it. |
 
 Fix everything mechanical without asking, then re-run until it reports clean.
 

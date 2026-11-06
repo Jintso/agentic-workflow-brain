@@ -1,0 +1,5 @@
+Brain link check: 3 files, 4 links
+MERGE      CLAUDE.md.merge (1 conflict to resolve)
+MERGE      templates/Handoff-Template.md.merge (no conflicts left: move it over templates/Handoff-Template.md)
+2 issue(s) found.
+exit 1

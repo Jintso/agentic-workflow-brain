@@ -22,7 +22,8 @@ Upgrading from 2.0.0: you and the template changed the same lines, so your
 copy was kept as it is, and the merge waits beside it with the conflicts marked:
   CLAUDE.md.merge: 1 conflict, at line 4
 Resolve each between its <<<<<<< and >>>>>>> lines, then move the file over
-yours, without .merge. Or ask Claude in the brain to do both.
+yours, without .merge. Or ask Claude in the brain to do both: /sync reports
+the file until then.
 What each release asks of you: @ROOT@/tool/CHANGELOG.md
 
 Next steps:
