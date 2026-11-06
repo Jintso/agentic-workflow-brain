@@ -13,4 +13,5 @@ echo '--- CLAUDE.md'
 cat brain/CLAUDE.md
 echo '--- templates/Handoff-Template.md'
 cat brain/templates/Handoff-Template.md
-ls brain brain/templates | grep -c '\.merge$' || true
+echo '--- .merge files'
+find brain -name '*.merge'
