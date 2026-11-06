@@ -13,16 +13,16 @@
 #
 #   repo path   its first part is a file or folder at the repo's root
 #               (src/, docs/adr/README.md, .claude/agents/)
-#   brain path  in a code repo's file, it starts with products/, company/
-#               or templates/, and is checked against the brain root. If the
-#               repo has a folder of that name too, either place will do.
+#   brain path  in a code repo's file, it starts with products/, company/,
+#               templates/ or scripts/, and is checked against the brain root.
+#               If the repo has a folder of that name too, either place will do.
 #   local path  in a CLAUDE.local.md, it starts with ~/, or with / and has a
 #               second / (/wrap-up is a command). That file holds paths on
 #               this machine, such as the Brain section's brain root.
 #
 # Skipped, as not checkable or not the repo's: home and absolute paths in any
 # other file (a committed file may name paths on other machines), URLs,
-# tokens with spaces (commands), globs and placeholders (* < > … $ { ( ? #),
+# tokens with spaces (commands), globs and placeholders (* < > … ... $ { ( ? #),
 # bare file names, tokens whose first part isn't at the root (origin/main),
 # examples (tokens after "for example" or "e.g." on their line), and missing
 # paths git ignores (build/, generated files).
@@ -59,7 +59,7 @@ check() {  # $1 CLAUDE.md, $2 the root its paths are relative to, $3 "repo" or "
   while IFS=$'\t' read -r n line; do
     grep -o '`[^`]*`' <<<"$line" | sed 's/^`//; s/`$//' | while IFS= read -r tok; do
       case "$tok" in
-        ''|*' '*|*'*'*|*'<'*|*'>'*|*'…'*|*'$'*|*'{'*|*'('*|*'?'*|*'#'*|*'://'*|-*) continue ;;
+        ''|*' '*|*'*'*|*'<'*|*'>'*|*'…'*|*'...'*|*'$'*|*'{'*|*'('*|*'?'*|*'#'*|*'://'*|-*) continue ;;
         */*) ;;
         *) continue ;;
       esac
@@ -70,7 +70,7 @@ check() {  # $1 CLAUDE.md, $2 the root its paths are relative to, $3 "repo" or "
       fi
       local path="${tok%/}" first="${tok%%/*}" bases=() base
       [ -e "$root/$first" ] && bases+=("$root")
-      [ "$kind" = repo ] && [[ "$tok" =~ ^(products|company|templates)/ ]] && bases+=("$brain")
+      [ "$kind" = repo ] && [[ "$tok" =~ ^(products|company|templates|scripts)/ ]] && bases+=("$brain")
       [ ${#bases[@]} -gt 0 ] || continue
       for base in "${bases[@]}"; do
         [ -e "$base/$path" ] && continue 2
