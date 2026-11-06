@@ -24,13 +24,15 @@ jobs:
         if: runner.os == 'Linux'
         run: tests/run.sh
       # A Mac's own bash 3.2 and BSD tools, as a user without Homebrew's bash
-      # has them, plus GNU date as gdate, which the README asks for.
+      # has them, plus GNU date as gdate and jq, which the README asks for.
       - name: Cases, with the system's bash and BSD tools
         if: runner.os == 'macOS'
         run: |
           command -v gdate >/dev/null || brew install coreutils
           mkdir -p "$RUNNER_TEMP/gnu"
           ln -s "$(command -v gdate)" "$RUNNER_TEMP/gnu/gdate"
+          command -v jq >/dev/null || brew install jq
+          ln -s "$(command -v jq)" "$RUNNER_TEMP/gnu/jq"
           export PATH="$RUNNER_TEMP/gnu:/usr/bin:/bin:/usr/sbin:/sbin"
           bash --version | head -n 1
           tests/run.sh

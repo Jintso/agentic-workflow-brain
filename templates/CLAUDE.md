@@ -50,6 +50,8 @@ When the conversation is compacted (by `/compact` or automatically), the summary
 
 It drops tool output, file contents that can be re-read, and dead ends, keeping one line per dead end saying why it failed.
 
+The user's exact words survive a compaction in the transcript: `scripts/user-words.sh` prints every message they sent this session and every answer they gave, so read it there before you quote them, rather than from the summary.
+
 ## Product Resolution
 
 Most commands act on one product. Resolve it in this order:
@@ -69,7 +71,7 @@ Never guess silently between two products.
 - `products/<slug>/README.md`: the product's map: what it is, where its code lives, its current status and next steps, and a link to every file in its folder. Read it first for any work on the product.
 - `company/README.md`: the vision, the values in `company/Values.md`, cross-product sprints, and the brain's own handoffs, of sessions that changed the brain itself rather than a product. Read it when a decision weighs the values or spans products.
 - `templates/README.md`: the handoff, ADR and feature-spec templates. Create those files from them.
-- `scripts/`: `check-links.sh` (the link graph), `check-claude-md.sh` (the paths each `CLAUDE.md` names), `session-times.sh` (a session's measured times). `/sync` runs the first two.
+- `scripts/`: `check-links.sh` (the link graph), `check-claude-md.sh` (the paths each `CLAUDE.md` names), `session-times.sh` (a session's measured times), `user-words.sh` (what the user said in a session, word for word). `/sync` runs the first two.
 
 Every product folder has the same shape, so a new file's place is never a guess:
 
