@@ -11,10 +11,12 @@
 #   Turns     the time inside Claude's turns, as the union of their intervals.
 #             A turn runs from its first record (the prompt, or the agent's or
 #             peer's message that started it, marked turnOrigin) to the
-#             turn_duration record that closes it. A turn with no closing record
-#             yet, such as the one running this script, counts up to End, and
-#             the line says so. It includes a turn's waits on agents or on the
-#             user's answer, so it isn't pure working time.
+#             turn_duration record that closes it, or, where none does before
+#             the next turn starts, to its last record before that start: a
+#             headless session (claude -p) writes no closing records. The last
+#             turn with no closing record, such as the one running this script,
+#             counts up to End, and the line says so. It includes a turn's waits
+#             on agents or on the user's answer, so it isn't pure working time.
 #             turn_duration's own durationMs counts only where no turnOrigin
 #             record comes before it (a transcript older than that field): it
 #             can count from an earlier turn's start. One turn of four minutes
@@ -75,39 +77,48 @@ else  # a past session, or one running elsewhere: the clock now would be the wro
   end_s=$("$DATE" -d "$last" +%s)
 fi
 
-# The records that start a turn (turnOrigin, with its turnIndex) and close one
-# (turn_duration, with durationMs), in the transcript's order. A turn's later records
-# (a message queued into it) carry the same turnIndex, so it starts at the first.
-# Each closing record closes the turn started last; one with no such turn falls back to
-# [its timestamp - durationMs, its timestamp]. Turns can still overlap, so the time
-# inside them is the union of the intervals.
-records=$(grep -e '"subtype":"turn_duration"' -e '"turnOrigin"' "$transcript")
+# Every record with a timestamp, in the transcript's order, as its kind, a value and
+# its time: O starts a turn (turnOrigin, with its turnIndex), C closes one
+# (turn_duration, with durationMs), R is any other. Left out are the file-history
+# snapshots, as for End, and the queue-operations a prompt writes as it is queued:
+# for a headless prompt that is just before its own turn starts.
+# A turn's later records (a message queued into it) carry the same turnIndex, so it
+# starts at the first. A closing record closes the open turn; one with no open turn
+# falls back to [its timestamp - durationMs, its timestamp]. A turn still open when
+# another starts ends at the last record before that start: a headless session
+# (claude -p) writes no closing records, and an interrupted turn may have none.
+# Turns can still overlap, so the time inside them is the union of the intervals.
+records=$(grep -v -e '^{"type":"file-history-snapshot"' -e '^{"type":"queue-operation"' "$transcript" \
+  | awk 'match($0, /"timestamp":"[^"]*"/) {
+           t = substr($0, RSTART + 13, RLENGTH - 14); k = "R"; v = "-"
+           if (index($0, "\"subtype\":\"turn_duration\"")) {
+             k = "C"; v = match($0, /"durationMs":[0-9]+/) ? substr($0, RSTART + 13, RLENGTH - 13) : 0
+           } else if (index($0, "\"turnOrigin\"")) {
+             k = "O"; if (match($0, /"turnIndex":[0-9]+/)) v = substr($0, RSTART + 12, RLENGTH - 12)
+           }
+           print k "\t" v "\t" t
+         }')
 turns=0
 turn_s=0
 running=0
 if [ -n "$records" ]; then
-  turns=$(printf '%s\n' "$records" | grep -c '"subtype":"turn_duration"')
-  intervals=$(paste \
-      <(printf '%s\n' "$records" | awk '{ print (index($0, "\"subtype\":\"turn_duration\"") ? "C" : "O") }') \
-      <(printf '%s\n' "$records" \
-        | awk 'match($0, /"timestamp":"[^"]*"/) { print substr($0, RSTART + 13, RLENGTH - 14) }' \
-        | "$DATE" -f - +%s.%3N) \
-      <(printf '%s\n' "$records" \
-        | awk '{ if (match($0, /"durationMs":[0-9]+/)) print substr($0, RSTART + 13, RLENGTH - 13)
-                 else if (match($0, /"turnIndex":[0-9]+/)) print substr($0, RSTART + 12, RLENGTH - 12)
-                 else print "-" }') \
+  intervals=$(paste <(cut -f1,2 <<<"$records") <(cut -f3 <<<"$records" | "$DATE" -f - +%s.%3N) \
     | awk -v end="$end_s" '
-        $1 == "O" { if ($3 == "-") start = $2; else { if (!($3 in first)) first[$3] = $2; start = first[$3] }
-                    open = 1; next }
-        open      { printf "%.3f %.3f\n", start, $2; open = 0; next }
-                  { printf "%.3f %.3f\n", $2 - $3 / 1000, $2 }
+        $1 == "O" { if (open && ($2 == "-" || $2 != cur)) { printf "%.3f %.3f\n", start, last; open = 0 }
+                    if ($2 == "-") start = $3; else { if (!($2 in first)) first[$2] = $3; start = first[$2] }
+                    cur = $2; open = 1 }
+        $1 == "C" { if (open) printf "%.3f %.3f\n", start, $3; else printf "%.3f %.3f\n", $3 - $2 / 1000, $3
+                    open = 0 }
+                  { if ($3 > last) last = $3 }
         END       { if (open) printf "%.3f %.3f running\n", start, end }')
   case "$intervals" in *running) running=1 ;; esac
+  turns=$(awk 'NF && $3 != "running" { n++ } END { print n + 0 }' <<<"$intervals")
   turn_s=$(printf '%s\n' "$intervals" | sort -n \
-    | awk 'NR == 1 { s = $1; e = $2; next }
+    | awk 'NF == 0 { next }
+           !seen++ { s = $1; e = $2; next }
            $1 > e { t += e - s; s = $1; e = $2; next }
            $2 > e { e = $2 }
-           END { if (NR) t += e - s; printf "%d\n", t }')
+           END { if (seen) t += e - s; printf "%d\n", t }')
 fi
 
 span() {  # seconds -> "2 h 05 min" or "45 min"
