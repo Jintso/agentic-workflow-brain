@@ -8,6 +8,16 @@ Versions are `major.minor.patch`:
 - **minor:** a command gains behaviour, or a template or a rule in `templates/CLAUDE.md` changes
 - **patch:** a fix that asks nothing of you
 
+## 2.3.0 — 2026-11-06
+
+### Added
+
+- `check-links.sh` reports a merge the installer left on a conflict, `CLAUDE.md.merge` or `templates/*.merge`, as `MERGE`, with the conflicts still marked in it. `/sync` shows them, proposes a resolution that keeps your text, and writes it over your file once you agree
+
+### Upgrade
+
+- Nothing to merge by hand: this release changes no template
+
 ## 2.2.0 — 2026-11-06
 
 The installer merges what the templates changed into your `CLAUDE.md` and templates.
