@@ -12,7 +12,7 @@ Review this conversation. Identify:
 - Which product(s) were worked on. Usually one. If several, repeat Steps 2–4 for each.
 - Brain-level work: changes no product owns, such as `company/`, `templates/`, the brain's `CLAUDE.md`, its installed commands and scripts, its git or GitHub setup, or repairs across several products. The status lines Step 2 replaces don't count. If there was any, Step 3 writes the brain's handoff as well.
 - Files created or modified, in the brain and in code
-- Decisions made and their rationale
+- Decisions made and their rationale. Quote the user from `scripts/user-words.sh`, which prints every message they sent this session and every answer they gave to a question, word for word from the transcript: a compaction may have reworded what this conversation still shows. If it prints nothing, quote from the conversation and say so.
 - Problems encountered and how they were solved
 - Open questions or unresolved issues
 - Anything the user said they want to do next

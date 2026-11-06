@@ -8,6 +8,18 @@ Versions are `major.minor.patch`:
 - **minor:** a command gains behaviour, or a template or a rule in `templates/CLAUDE.md` changes
 - **patch:** a fix that asks nothing of you
 
+## 2.7.0 — 2026-11-06
+
+### Added
+
+- `scripts/user-words.sh` prints what the user said in a session, word for word, from Claude Code's transcript: every message they sent, whether Claude was idle or working, the slash commands they ran, and each answer they gave to Claude's questions with its question and any note. Each comes under its local time. A compaction summary rewords the user, and a handoff quotes them, so `/wrap-up` now quotes the user's decisions from it, and `templates/CLAUDE.md`'s *Compact Instructions* say to read the user's words there after a compaction. It reads the same transcript as `session-times.sh` and needs `jq`
+- Checked on two real sessions: every decision a handoff had quoted from the user came out word for word, 23 messages and answers from a 9 MB transcript
+
+### Upgrade
+
+- Merge two lines of `templates/CLAUDE.md` into your brain's `CLAUDE.md`, or let the installer merge them: the paragraph after *Compact Instructions*' list, and `user-words.sh` in *Where Things Are*'s `scripts/` line
+- Install `jq` if `jq --version` finds none: your package manager has it (`brew install jq`, `apt install jq`)
+
 ## 2.6.0 — 2026-11-06
 
 ### Added

@@ -1,0 +1,13 @@
+2026-11-06 10:00:00 UTC  command
+/resume game
+
+2026-11-06 10:01:00 UTC  prompt
+Step 2, and say "why" in one line.
+
+2026-11-06 10:01:30 UTC  queued
+Also check the tests.
+
+2026-11-06 10:02:00 UTC  queued
+An origin written as a string.
+
+exit 0

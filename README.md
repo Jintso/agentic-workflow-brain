@@ -47,7 +47,7 @@ This copies into the brain directory:
 
 - 10 slash commands → `.claude/commands/`
 - Templates → `templates/`, those you don't have yet
-- Three scripts → `scripts/`: the link checker, the `CLAUDE.md` path check, and the session clock
+- Four scripts → `scripts/`: the link checker, the `CLAUDE.md` path check, the session clock, and the user's words
 - `CLAUDE.md`, if none exists
 - The version it installed → `.claude/brain-version`
 
@@ -183,7 +183,7 @@ products/
     ...
 
 templates/                    Shared templates for handoffs, ADRs, feature specs
-scripts/                      check-links.sh, check-claude-md.sh, session-times.sh
+scripts/                      check-links.sh, check-claude-md.sh, session-times.sh, user-words.sh
 ```
 
 ## Conventions
@@ -198,6 +198,7 @@ These are what make the brain navigable by both people and agents. `CLAUDE.md` c
 - **Naming:** folders lowercase kebab-case, documents PascalCase with hyphens, handoffs and ADRs numbered per product.
 - **Status is the present only.** A product's *Current Status*, its portfolio row and its index line are replaced at each `/wrap-up`, never appended to. A phase whose steps are all done moves whole to `Execution-Plan-Archive.md` and leaves one line in the plan. The handoffs are the record of each session.
 - **Times are measured, never estimated.** A start, end or duration comes from `date` stamps written at the time, or from a recorded timestamp: a commit, a log line, the session transcript. `scripts/session-times.sh` reads a session's start, end and time inside Claude's turns from Claude Code's local transcript, and `/wrap-up` copies its line into the handoff. The transcript format isn't a public interface, so if the script finds nothing, the handoff says `not recorded`. It needs GNU `date`: on macOS, `brew install coreutils`.
+- **The user is quoted, not recalled.** A handoff quotes the user's decisions in their own words, and a compaction summary rewords them. `scripts/user-words.sh` prints every message the user sent in a session and every answer they gave to Claude's questions, word for word from the same transcript, and `/wrap-up` quotes from it. It needs `jq`.
 - **A `CLAUDE.md` is a map,** the brain's and every code repo's: inline only the rules that hold on every action and the *Compact Instructions*, everything else a one-line pointer to the file that holds it, and no copied status or counts.
 
 ## Verifying the Brain
@@ -248,7 +249,7 @@ If you add top-level brain folders beyond `company/` and `products/`, add them t
 
 ## Testing the Scripts
 
-`tests/run.sh` runs a case for each thing the three scripts and the installer were built or fixed to do, and exits 1 if any output differs from the one recorded. CI runs it on Ubuntu and on macOS, with a Mac's own bash 3.2, for every pull request, and `shellcheck` over every shell file:
+`tests/run.sh` runs a case for each thing the four scripts and the installer were built or fixed to do, and exits 1 if any output differs from the one recorded. CI runs it on Ubuntu and on macOS, with a Mac's own bash 3.2, for every pull request, and `shellcheck` over every shell file:
 
 ```bash
 tests/run.sh                    # every case
