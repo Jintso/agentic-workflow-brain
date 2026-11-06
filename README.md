@@ -63,7 +63,7 @@ Pull this repo and re-run `./install.sh /path/to/your/brain`. The commands and s
 
 Your `CLAUDE.md` and templates hold your own text, so they are kept, and what the templates changed since the version in `.claude/brain-version` is merged into them. It is a three-way merge, as `git merge` does one, with the template of your brain's version as the base, so your text stays and the template's changes come in. The installer shows what each merge changed. In a brain kept in git, commit them like any other change.
 
-Where you and the template changed the same lines, the installer can't choose. It leaves your file as it is and writes the merge beside it, as `CLAUDE.md.merge` for example, with each conflict between `<<<<<<<` and `>>>>>>>` lines. Resolve them, then move the file over yours, or ask Claude in the brain:
+Where you and the template changed the same lines, the installer can't choose. It leaves your file as it is and writes the merge beside it, as `CLAUDE.md.merge` for example, with each conflict between `<<<<<<<` and `>>>>>>>` lines. Resolve them, then move the file over yours. `/sync` reports the `.merge` file until you do, and offers to resolve it. Or ask Claude in the brain:
 
 ```
 Resolve the conflicts in CLAUDE.md.merge: keep my organisation's text and take the template's new rules.
@@ -207,7 +207,7 @@ scripts/check-links.sh            # from the brain root
 scripts/check-links.sh ~/brain    # or point it somewhere
 ```
 
-It scans `BRAIN-INDEX.md`, `company/` and `products/` and reports broken links, leftover wikilinks, files without a parent line, orphans nothing links to, and cross-product links. Fenced code blocks and inline code are skipped, so a file can show an example link. Exit code 1 on issues, so it works as a pre-commit hook or CI step for the brain repo. `/sync` and `/wrap-up` run it for you.
+It scans `BRAIN-INDEX.md`, `company/` and `products/` and reports broken links, leftover wikilinks, files without a parent line, orphans nothing links to, and cross-product links. It also reports a `CLAUDE.md.merge` or `templates/*.merge` that the installer left on a conflict. Fenced code blocks and inline code are skipped, so a file can show an example link. Exit code 1 on issues, so it works as a pre-commit hook or CI step for the brain repo. `/sync` and `/wrap-up` run it for you.
 
 ```bash
 scripts/check-claude-md.sh        # from the brain root

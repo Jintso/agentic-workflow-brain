@@ -9,6 +9,8 @@
 #   NO-PARENT  a file missing the "> Part of [...](...)" line
 #   ORPHAN     a file that no other file links to
 #   CROSS-PRODUCT  a link from one product's folder into another's
+#   MERGE      a merge install.sh left unresolved, CLAUDE.md.merge or
+#              templates/*.merge, with the conflicts still marked in it
 #
 # Fenced code blocks (``` or ~~~) and inline code spans are skipped, so a
 # file can show an example link or wikilink. Indented code blocks are not
@@ -127,6 +129,17 @@ while IFS= read -r f; do
   [ "$f" = "BRAIN-INDEX.md" ] && continue
   grep -Fxq "$f" "$TMP/targets.u" || printf 'ORPHAN     %s\n' "$f" >> "$TMP/issues"
 done < "$TMP/files"
+
+# --- merges the installer left beside CLAUDE.md or a template, on a conflict
+for m in CLAUDE.md.merge templates/*.merge; do
+  [ -f "$m" ] || continue
+  n="$(grep -c '^<<<<<<< ' "$m")"
+  case "$n" in
+    0) printf 'MERGE      %s (no conflicts left: move it over %s)\n' "$m" "${m%.merge}" ;;
+    1) printf 'MERGE      %s (1 conflict to resolve)\n' "$m" ;;
+    *) printf 'MERGE      %s (%s conflicts to resolve)\n' "$m" "$n" ;;
+  esac >> "$TMP/issues"
+done
 
 # --- report
 issues="$(wc -l < "$TMP/issues" | tr -d ' ')"

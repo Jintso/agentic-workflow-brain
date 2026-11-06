@@ -167,7 +167,8 @@ if [ -s "$WORK/conflicts" ]; then
     echo "copy was kept as it is, and the merge waits beside it with the conflicts marked:"
     cat "$WORK/conflicts"
     echo "Resolve each between its <<<<<<< and >>>>>>> lines, then move the file over"
-    echo "yours, without .merge. Or ask Claude in the brain to do both."
+    echo "yours, without .merge. Or ask Claude in the brain to do both: /sync reports"
+    echo "the file until then."
     echo "What each release asks of you: $SCRIPT_DIR/CHANGELOG.md"
     echo ""
 fi
