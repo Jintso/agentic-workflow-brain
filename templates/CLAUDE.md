@@ -25,14 +25,14 @@ The **brain root** is the directory that holds this file, `BRAIN-INDEX.md` and `
 ## Session Protocol
 
 1. **Start:** pull the brain if it is kept in git, read `BRAIN-INDEX.md`, resolve the product (below), then read that product's `README.md`, `Execution-Plan.md` and the latest file in its `handoffs/`. `/resume` does this. `Execution-Plan-Archive.md` is history: open it only when a question needs the past.
-2. **End:** run `/wrap-up` to write a handoff, update the execution plan and replace the product's status, then commit and push the brain.
+2. **End:** run `/wrap-up` to write a handoff, update the execution plan and replace the product's status, then commit what is left and push the brain. A session that changed the brain but no product ends with `/wrap-up` too.
 3. **Never assume context** from a previous conversation. Read the files.
 
 ## The Brain in Git
 
 A brain kept in a git repository with a remote can be shared by several machines. Each machine clones it to the same path, so the *Brain* sections in the code repos hold on all of them. Delete this section if the brain stays on one machine.
 
-- `/resume` pulls, `/wrap-up` commits and pushes. A brain change made outside those two commands is committed and pushed in the same session.
+- `/resume` pulls. A command that writes the brain commits the files it wrote when it finishes. Only `/wrap-up` pushes, once at the end of the session, after committing what is left, such as edits made by hand. Push sooner only when the user asks.
 - Commit only this session's files: another session may have the brain open.
 - Pull with `--ff-only` and never force-push. If two machines diverge, stop and ask.
 - No credentials in the brain, even in a private repository.

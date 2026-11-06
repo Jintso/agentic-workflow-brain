@@ -6,6 +6,8 @@ You are converting a brain made with the original `obsidian-brain` layout (numbe
 
 Every brain path in this command is relative to the **brain root**, not to the working directory. The brain root is the directory that holds both `BRAIN-INDEX.md` and `products/`, or, if the brain has not been initialised yet, the one the installer ran against (it holds `templates/` and `scripts/check-links.sh`). It is either the working directory or one attached with `--add-dir`. The old vault is never the brain root, even though it has a `BRAIN-INDEX.md` of its own. Run the link checker as `<brain root>/scripts/check-links.sh <brain root>`.
 
+In a brain kept in git, commit the brain files this command wrote when it finishes, and only those: stage them by explicit path, never with `git add -A` or `.`. The subject is `<slug>: /<command>, <what changed>`, or `brain: /<command>, <what changed>` when the change isn't one product's. Don't push: the session's `/wrap-up` pushes once, at its end. A code repository follows its own rules.
+
 ## Input
 
 `/migrate /path/to/old-vault` — the path is required. Ask for it if missing.

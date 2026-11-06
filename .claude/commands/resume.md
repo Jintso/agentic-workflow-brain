@@ -13,6 +13,7 @@ A brain kept in git may have been pushed to from another machine since the last 
 - Pulled, or already up to date → continue.
 - Not a git repository, or no upstream → continue with the local copy, and say so in one line.
 - Uncommitted changes in the brain → another session has it open, or one ended without `/wrap-up`. Show `git status --short` in the briefing, and don't commit those files: they are not this session's. They don't stop the pull, since `--ff-only` refuses rather than overwrite a changed file.
+- Commits ahead of the remote (`git status --short --branch` shows `ahead`) → commands of a session that ended without `/wrap-up`, or of one still open, committed and didn't push. List them in the briefing (`git log --oneline @{u}..`). Don't push them: the next `/wrap-up` does.
 - The pull fails (offline, a refused overwrite, or the histories diverged) → continue with the local copy and tell the user why. Never merge, rebase, stash or reset the brain on your own.
 
 ## Step 1: Pick the Product

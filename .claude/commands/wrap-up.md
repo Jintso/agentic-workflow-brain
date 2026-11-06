@@ -105,9 +105,10 @@ Run the link checker (see *Brain Root*). Fix everything it reports before finish
 
 ## Step 6: Commit and Push
 
-Running `/wrap-up` is the user's go-ahead to commit and push the brain. Don't stop to ask.
+Running `/wrap-up` is the user's go-ahead to commit and push the brain. Don't stop to ask. It is the only command that pushes: the others commit the files they wrote and leave the push to this step.
 
 - **Stage only this session's files,** by explicit path, never with `git add -A` or `.`. Commit them with the subject `<slug>: handoff-NNN, <focus>`, or `brain: <what changed>` when the session touched no product, and a short body if the subject doesn't say enough.
+- **Earlier commits go out with yours.** Commands run in this session have committed their own files already, and `git log --oneline @{u}..` lists every commit the push will carry. A commit no command of this session made comes from another session on this machine, still open or ended without `/wrap-up`. It is a whole command's work, so it goes out too; name it in the summary.
 - **Another session may have the brain open** (its uncommitted files show in `git status`). Leave its files alone and commit only your own paths (`git commit -- <paths>`). Hold the push until that session has committed, then push, which carries its commit too. Say in the summary that the push is waiting, and on what.
 - **If the push is refused** because the remote moved, pull with `--rebase` and push again. If the rebase stops on a conflict, run `git rebase --abort`, stop, and show the user the conflicting files. Never force.
 - **If the brain isn't a git repository** or has no remote, say so in the summary instead.
@@ -120,7 +121,7 @@ Show the user:
 1. Product(s) touched and the number of brain files created/modified
 2. Execution plan changes (steps completed, status changes)
 3. Handoff file path
-4. The brain commit, and whether it is pushed
+4. The brain commits the push carried, and whether they are pushed
 5. Top recommendation for next session
 6. "Your brain is updated. Run `/resume <slug>` next time to pick up where we left off."
 

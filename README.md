@@ -18,7 +18,7 @@ Ten **Claude Code slash commands** plus a folder convention. Together they give 
 | `/init-brain` | Interactive wizard. Creates the shared structure and the first product. |
 | `/add-product` | Reads the product's code and any spec kept elsewhere, checks the docs against the code, interviews you about the rest, and generates its self-contained folder. |
 | `/resume [product]` | Pulls the brain if it is in git, loads context, shows progress, recommends what to work on. |
-| `/wrap-up` | Captures session work, writes a handoff with the session's measured times, updates the execution plan, replaces the product's status, then commits and pushes the brain. |
+| `/wrap-up` | Captures session work, writes a handoff with the session's measured times, updates the execution plan, replaces the product's status, then commits what is left and pushes the brain. The only command that pushes. |
 | `/status [product\|all]` | Portfolio dashboard across products, or a deep dive on one. |
 | `/plan [product] <step>` | Breaks an execution plan step into concrete tasks. |
 | `/sprint [product\|all]` | Plans a week of work with daily themes and effort estimates. |
@@ -83,7 +83,7 @@ Then type `/init-brain`. The wizard asks about your organisation, then about you
 
 **Its own repository** (recommended, especially with several products). The brain and each code base are then separate directories, and a session needs both: one is the working directory, the other is attached with `--add-dir`.
 
-**On several machines.** Make the brain a git repository with a private remote, and clone it to the same path on every machine, so the *Brain* sections in your code repos hold everywhere. `/resume` then pulls before it reads, and `/wrap-up` commits this session's files and pushes. It never stages another session's files and never force-pushes; if two machines diverge, it stops and asks. Keep credentials out of the brain even when the remote is private.
+**On several machines.** Make the brain a git repository with a private remote, and clone it to the same path on every machine, so the *Brain* sections in your code repos hold everywhere. `/resume` then pulls before it reads. Each command that writes the brain commits the files it wrote, and `/wrap-up` commits the rest and pushes, once per session. No command stages another session's files or force-pushes; if two machines diverge, `/wrap-up` stops and asks. Keep credentials out of the brain even when the remote is private.
 
 ### How to Start a Session
 
