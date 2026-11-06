@@ -1,0 +1,35 @@
+🧠 Agentic Workflow Brain — Installer
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Brain:   @ROOT@/brain
+Version: 2.1.0, over 2.0.0
+
+Slash commands:
+  ✅ /resume
+
+Scripts:
+  ✅ scripts/check-links.sh
+
+Templates:
+  ⏭  templates/Handoff-Template.md (exists, kept)
+
+  ⏭  CLAUDE.md (exists, kept)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Done. 1 commands installed, version 2.1.0 recorded in .claude/brain-version.
+
+Upgrading from 2.0.0: this copy of the tool has no tag v2.0.0 to compare
+the templates with, so they may have changed. Your CLAUDE.md and templates
+were kept: merge what the releases since 2.0.0 ask for.
+What each release asks of you: @ROOT@/tool/CHANGELOG.md
+How to merge: Upgrading in @ROOT@/tool/README.md
+
+Next steps:
+  cd @ROOT@/brain
+  claude
+  /init-brain          # new brain
+  /migrate <old-vault> # or import an obsidian-brain vault
+
+Tip: version the brain with git so every session's changes are tracked:
+  git -C "@ROOT@/brain" init
+exit 0

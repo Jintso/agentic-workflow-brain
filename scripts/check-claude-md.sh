@@ -57,6 +57,7 @@ check() {  # $1 CLAUDE.md, $2 the root its paths are relative to, $3 "repo" or "
   awk '/^[[:space:]]*(```|~~~)/ { fenced = !fenced; next }
        !fenced { sub(/([Ee]\.g\.|[Ff]or example).*/, ""); print NR "\t" $0 }' "$file" |
   while IFS=$'\t' read -r n line; do
+    # shellcheck disable=SC2016  # the backticks are the markdown being matched
     grep -o '`[^`]*`' <<<"$line" | sed 's/^`//; s/`$//' | while IFS= read -r tok; do
       case "$tok" in
         ''|*' '*|*'*'*|*'<'*|*'>'*|*'…'*|*'...'*|*'$'*|*'{'*|*'('*|*'?'*|*'#'*|*'://'*|-*) continue ;;
@@ -64,6 +65,7 @@ check() {  # $1 CLAUDE.md, $2 the root its paths are relative to, $3 "repo" or "
         *) continue ;;
       esac
       if [[ "$tok" == [~/]* ]]; then
+        # shellcheck disable=SC2088  # a literal ~/ in the token, not the home folder
         [ "${file##*/}" = CLAUDE.local.md ] && [[ "$tok" == '~/'* || "$tok" == /*/* ]] || continue
         [ -e "${tok/#\~\//$HOME/}" ] || echo "MISSING  $file:$n  $tok"
         continue
@@ -105,6 +107,7 @@ out=$(
   grep -E '^\| \[' "$brain/products/README.md" | awk -F'|' '{ print $(NF-1) }' |
     while IFS= read -r cell; do
       if [[ "$cell" == *'`'* ]]; then
+        # shellcheck disable=SC2016  # the backticks are the markdown being matched
         grep -o '`[^`]*`' <<<"$cell" | tr -d '`'
       else
         sed 's/^[[:space:]]*//; s/[[:space:]]*$//' <<<"$cell"

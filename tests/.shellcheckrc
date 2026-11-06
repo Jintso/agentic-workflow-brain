@@ -1,0 +1,5 @@
+# The cases and lib.sh have no shebang: run.sh sources them into bash.
+shell=bash
+# The cases write fixtures with backticks in single quotes on purpose: they are
+# markdown, not command substitutions.
+disable=SC2016

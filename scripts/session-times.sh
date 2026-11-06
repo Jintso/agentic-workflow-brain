@@ -37,7 +37,7 @@
 
 set -u
 
-DATE=date
+DATE='date'
 if ! date -d @0 +%s >/dev/null 2>&1; then
   if command -v gdate >/dev/null 2>&1; then
     DATE=gdate

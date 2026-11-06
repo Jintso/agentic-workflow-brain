@@ -10,7 +10,7 @@
 # with the helpers of tests/lib.sh. Only PATH and TMPDIR are kept from this
 # environment: HOME is the case's folder, so ~/ resolves there and git reads no
 # configuration of this machine; TZ=UTC and LC_ALL=C. A case reads nothing
-# outside its folder and needs no network.
+# outside its folder and the repo, and needs no network.
 #
 # Usage:
 #   tests/run.sh                        # every case
@@ -73,6 +73,7 @@ for c in "${cases[@]}"; do
     pass=$((pass + 1))
   else
     echo "FAIL   $c"
+    # shellcheck disable=SC2001  # a prefix on every line reads plainest in sed
     sed 's/^/       /' <<<"$d"
     fail=$((fail + 1))
   fi

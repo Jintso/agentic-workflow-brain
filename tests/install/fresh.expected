@@ -1,0 +1,30 @@
+🧠 Agentic Workflow Brain — Installer
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Brain:   @ROOT@/brain
+Version: 2.0.0
+
+Slash commands:
+  ✅ /resume
+
+Scripts:
+  ✅ scripts/check-links.sh
+
+Templates:
+  ✅ templates/Handoff-Template.md
+
+  ✅ CLAUDE.md placed at the brain root; /init-brain fills in the placeholders
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Done. 1 commands installed, version 2.0.0 recorded in .claude/brain-version.
+
+Next steps:
+  cd @ROOT@/brain
+  claude
+  /init-brain          # new brain
+  /migrate <old-vault> # or import an obsidian-brain vault
+
+Tip: version the brain with git so every session's changes are tracked:
+  git -C "@ROOT@/brain" init
+exit 0
+2.0.0
