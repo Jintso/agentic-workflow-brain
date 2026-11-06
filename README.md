@@ -17,8 +17,8 @@ Ten **Claude Code slash commands** plus a folder convention. Together they give 
 |---------|-------------|
 | `/init-brain` | Interactive wizard. Creates the shared structure and the first product. |
 | `/add-product` | Reads the product's code if it exists, checks its docs against it, interviews you about the rest, and generates its self-contained folder. |
-| `/resume [product]` | Loads context, shows progress, recommends what to work on. |
-| `/wrap-up` | Captures session work, writes a handoff with the session's measured times, updates the execution plan, replaces the product's status. |
+| `/resume [product]` | Pulls the brain if it is in git, loads context, shows progress, recommends what to work on. |
+| `/wrap-up` | Captures session work, writes a handoff with the session's measured times, updates the execution plan, replaces the product's status, then commits and pushes the brain. |
 | `/status [product\|all]` | Portfolio dashboard across products, or a deep dive on one. |
 | `/plan [product] <step>` | Breaks an execution plan step into concrete tasks. |
 | `/sprint [product\|all]` | Plans a week of work with daily themes and effort estimates. |
@@ -75,6 +75,8 @@ Then type `/init-brain`. The wizard asks about your organisation, then about you
 ### Where to Put the Brain
 
 **Its own repository** (recommended, especially with several products). The brain and each code base are then separate directories, and a session needs both: one is the working directory, the other is attached with `--add-dir`.
+
+**On several machines.** Make the brain a git repository with a private remote, and clone it to the same path on every machine, so the *Brain* sections in your code repos hold everywhere. `/resume` then pulls before it reads, and `/wrap-up` commits this session's files and pushes. It never stages another session's files and never force-pushes; if two machines diverge, it stops and asks. Keep credentials out of the brain even when the remote is private.
 
 ### How to Start a Session
 
@@ -229,7 +231,7 @@ If you add top-level brain folders beyond `company/` and `products/`, add them t
 
 - **Don't skip `/wrap-up`.** It is what makes `/resume` useful.
 - **Run `/sync` weekly** to keep the link graph clean.
-- **Version the brain with git.** Every session then has a diff you can read.
+- **Version the brain with git.** Every session then has a diff you can read, and with a remote the brain follows you between machines (see *Where to Put the Brain*).
 - **Use whatever viewer you like.** Obsidian's graph view, VS Code's markdown preview, or GitHub's file browser all work, because it's just markdown and relative links.
 - **Pin the entry points** in your editor: `BRAIN-INDEX.md` and the product `README.md` you're working on.
 
