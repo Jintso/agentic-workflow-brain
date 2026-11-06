@@ -2,7 +2,7 @@
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Brain:   @ROOT@/brain
-Version: 2.1.0, over 2.0.0
+Version: 2.1.0, over 2.0.1
 
 Slash commands:
   ✅ /resume
@@ -11,18 +11,28 @@ Scripts:
   ✅ scripts/check-links.sh
 
 Templates:
-  ⏭  templates/Handoff-Template.md (exists, kept)
+  🔀 templates/Handoff-Template.md (exists, merged the changes since 2.0.1)
 
-  ⏭  CLAUDE.md (exists, kept)
+  🔀 CLAUDE.md (exists, merged the changes since 2.0.1)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ Done. 1 commands installed, version 2.1.0 recorded in .claude/brain-version.
 
-Upgrading from 2.0.0: the templates changed since. Your CLAUDE.md and
-templates were kept, so merge what's new. To see it:
-  git -C "@ROOT@/tool" diff v2.0.0 -- templates/
-What each release asks of you: @ROOT@/tool/CHANGELOG.md
-How to merge: Upgrading in @ROOT@/tool/README.md
+Upgrading from 2.0.1: the templates changed since, and their changes were
+merged into your copies:
+
+--- templates/Handoff-Template.md, before
++++ templates/Handoff-Template.md, merged
+@@ -1 +1,2 @@
+ # Handoff
++**Date:**
+--- CLAUDE.md, before
++++ CLAUDE.md, merged
+@@ -5,3 +5,4 @@
+ ## Rules
+ 
+ - One rule.
++- A new rule.
 
 Next steps:
   cd @ROOT@/brain
@@ -34,3 +44,16 @@ Tip: version the brain with git so every session's changes are tracked:
   git -C "@ROOT@/brain" init
 exit 0
 2.1.0
+--- CLAUDE.md
+# CLAUDE.md
+
+Personal Homelab
+
+## Rules
+
+- One rule.
+- A new rule.
+--- templates/Handoff-Template.md
+# Handoff
+**Date:**
+0
