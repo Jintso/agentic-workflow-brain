@@ -67,7 +67,7 @@ Never guess silently between two products.
 - `BRAIN-INDEX.md`: the entry point, one line per top folder and per product. Read it at the start of every session.
 - `products/README.md`: one row per product with its status, phase, last session and code location. Read it to resolve a product.
 - `products/<slug>/README.md`: the product's map: what it is, where its code lives, its current status and next steps, and a link to every file in its folder. Read it first for any work on the product.
-- `company/README.md`: the vision, the values in `company/Values.md`, and cross-product sprints. Read it when a decision weighs the values or spans products.
+- `company/README.md`: the vision, the values in `company/Values.md`, cross-product sprints, and in `company/handoffs/` the handoffs of sessions that changed the brain itself rather than a product. Read it when a decision weighs the values or spans products.
 - `templates/README.md`: the handoff, ADR and feature-spec templates. Create those files from them.
 - `scripts/`: `check-links.sh` (the link graph), `check-claude-md.sh` (the paths each `CLAUDE.md` names), `session-times.sh` (a session's measured times). `/sync` runs the first two.
 
