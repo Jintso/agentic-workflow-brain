@@ -8,6 +8,16 @@ Versions are `major.minor.patch`:
 - **minor:** a command gains behaviour, or a template or a rule in `templates/CLAUDE.md` changes
 - **patch:** a fix that asks nothing of you
 
+## 2.4.0 — 2026-11-06
+
+### Added
+
+- `/resume` pulls the product's code repo too, with `--ff-only`, and says in the briefing what came in. Before, it pulled only the brain, so a session on a second machine could start from old code. It pulls only that product's repos, and never merges, rebases, stashes or switches branches: if the pull fails, it says why and goes on with the local copy
+
+### Upgrade
+
+- Nothing to merge by hand: this release changes no template
+
 ## 2.3.0 — 2026-11-06
 
 ### Added
