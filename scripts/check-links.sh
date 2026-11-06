@@ -5,6 +5,7 @@
 # it holds placeholder links) and reports:
 #
 #   BROKEN     a relative link whose target file does not exist
+#   ANCHOR     a link's #anchor that matches no heading in its target file
 #   WIKILINK   a leftover [[wikilink]]; this brain uses standard markdown links
 #   NO-PARENT  a file missing the "> Part of [...](...)" line
 #   ORPHAN     a file that no other file links to
@@ -14,7 +15,8 @@
 #
 # Fenced code blocks (``` or ~~~) and inline code spans are skipped, so a
 # file can show an example link or wikilink. Indented code blocks are not
-# recognised: fence an example instead.
+# recognised: fence an example instead. Anchors follow GitHub's slugs; a setext
+# (underlined) heading gives no anchor: write it with #.
 #
 # Usage:
 #   scripts/check-links.sh                 # from the brain root
@@ -44,14 +46,15 @@ trap 'rm -rf "$TMP"' EXIT
 find "${SCAN[@]}" -type f -name '*.md' | sed 's#^\./##' | sort > "$TMP/files"
 : > "$TMP/targets"
 : > "$TMP/issues"
+: > "$TMP/anchor_refs"
 
 files=0
 links=0
 ROOT_ABS="$(pwd -P)"
 
-# Print a markdown file with fenced code blocks and inline code spans blanked
-# out. A fence closes on the same character it opened with, at least as long.
-strip_code() {
+# Print a markdown file with fenced code blocks blanked out. A fence closes on
+# the same character it opened with, at least as long.
+strip_fences() {
   awk '
     {
       line = $0
@@ -69,11 +72,49 @@ strip_code() {
         }
         print ""; next
       }
-      gsub(/``([^`]|`[^`])*``/, "", line)
-      gsub(/`[^`]*`/, "", line)
       print line
     }
   ' "$1"
+}
+
+# The same, with inline code spans blanked out too.
+strip_code() {
+  strip_fences "$1" | awk '
+    {
+      gsub(/``([^`]|`[^`])*``/, "")
+      gsub(/`[^`]*`/, "")
+      print
+    }
+  '
+}
+
+# Print the anchor of every heading in a markdown file, as GitHub builds it:
+# links reduced to their text, lowercase, everything but letters, digits,
+# spaces, hyphens and underscores dropped, each space a hyphen, and -1, -2 ...
+# added to a repeated heading.
+heading_slugs() {
+  strip_fences "$1" | awk '
+    /^ ? ? ?#+([ \t]|$)/ {
+      s = $0
+      sub(/^ */, "", s)
+      match(s, /^#+/)
+      if (RLENGTH > 6) next
+      s = substr(s, RLENGTH + 1)
+      sub(/^[ \t]+/, "", s)
+      sub(/[ \t]+#+[ \t]*$/, "", s)
+      sub(/[ \t]+$/, "", s)
+      while (match(s, /\[[^]]*\]\([^)]*\)/)) {
+        m = substr(s, RSTART, RLENGTH)
+        sub(/\]\(.*$/, "", m)
+        s = substr(s, 1, RSTART - 1) substr(m, 2) substr(s, RSTART + RLENGTH)
+      }
+      s = tolower(s)
+      gsub(/[^[:alnum:] _-]/, "", s)
+      gsub(/ /, "-", s)
+      n = seen[s]++
+      print (n ? s "-" n : s)
+    }
+  '
 }
 
 while IFS= read -r f; do
@@ -81,23 +122,32 @@ while IFS= read -r f; do
   dir="$(dirname "$f")"
   strip_code "$f" > "$TMP/body"
 
-  # --- links: every ](target) outside code, minus URLs, anchors and absolute paths
+  # --- links: every ](target) outside code, minus URLs and absolute paths
   grep -o '\]([^)]*)' "$TMP/body" 2>/dev/null | sed 's/^](//; s/)$//' | while IFS= read -r raw; do
     t="${raw%% *}"                 # drop an optional "title"
     t="${t#<}"; t="${t%>}"         # drop <angle brackets>
-    t="${t%%#*}"                   # drop #anchor
     case "$t" in
       ''|http://*|https://*|mailto:*|/*) continue ;;
     esac
-    printf '%s\n' "$t"
+    case "$t" in
+      *'#'*) printf '%s|%s\n' "${t%%#*}" "${t#*#}" ;;  # path|anchor; path empty: this file
+      *)     printf '%s|\n' "$t" ;;
+    esac
   done > "$TMP/cur"
 
-  while IFS= read -r t; do
+  while IFS='|' read -r t a; do
+    if [ -z "$t" ]; then
+      [ -n "$a" ] && printf '%s\t%s\t%s\t%s\n' "$f" "$f" "$a" "#$a" >> "$TMP/anchor_refs"
+      continue
+    fi
     links=$((links + 1))
     if [ -e "$dir/$t" ]; then
       abs="$(cd "$dir/$(dirname "$t")" && pwd -P)/$(basename "$t")"
       rel="${abs#"$ROOT_ABS"/}"
       printf '%s\n' "$rel" >> "$TMP/targets"
+      case "$rel" in *.md)
+        [ -n "$a" ] && printf '%s\t%s\t%s\t%s\n' "$f" "$rel" "$a" "$t#$a" >> "$TMP/anchor_refs"
+      esac
       # products/<a>/... linking into products/<b>/... breaks self-containment
       case "$f" in products/*/*)
         src_p="${f#products/}"; src_p="${src_p%%/*}"
@@ -123,6 +173,16 @@ while IFS= read -r f; do
   fi
 done < "$TMP/files"
 
+# --- anchors: each one must match a heading in its target file
+anchors="$(wc -l < "$TMP/anchor_refs" | tr -d ' ')"
+cut -f2 "$TMP/anchor_refs" | sort -u | while IFS= read -r target; do
+  heading_slugs "$target" | awk -v t="$target" '{ print t "\t" $0 }'
+done > "$TMP/slugs"
+awk -F'\t' '
+  NR == FNR { have[$1 FS $2] = 1; next }
+  !(($2 FS $3) in have) { printf "ANCHOR     %s -> %s\n", $1, $4 }
+' "$TMP/slugs" "$TMP/anchor_refs" >> "$TMP/issues"
+
 # --- orphans: markdown files nothing links to
 sort -u "$TMP/targets" > "$TMP/targets.u"
 while IFS= read -r f; do
@@ -143,7 +203,7 @@ done
 
 # --- report
 issues="$(wc -l < "$TMP/issues" | tr -d ' ')"
-echo "Brain link check: $files files, $links links"
+echo "Brain link check: $files files, $links links, $anchors anchors"
 if [ "$issues" -eq 0 ]; then
   echo "OK: no issues found."
   exit 0

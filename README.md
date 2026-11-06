@@ -190,7 +190,7 @@ scripts/                      check-links.sh, check-claude-md.sh, session-times.
 
 These are what make the brain navigable by both people and agents. `CLAUDE.md` carries them, and the two check scripts enforce the structural ones.
 
-- **Relative markdown links only.** `[Architecture](engineering/Architecture.md)`, never `[[Architecture]]`. Paths are relative to the file that contains them.
+- **Relative markdown links only.** `[Architecture](engineering/Architecture.md)`, never `[[Architecture]]`. Paths are relative to the file that contains them, and a link to a heading uses GitHub's anchor for it.
 - **Every file has a parent line.** The first line of every file except `BRAIN-INDEX.md` and `CLAUDE.md` is `> Part of [Parent](path.md)`.
 - **Every folder has a `README.md`** that links to everything inside it. Forges render it when you browse the folder.
 - **Products are self-contained.** Nothing in `products/a/` links into `products/b/`. Shared material goes in `company/`. A product folder can be archived or moved out without breaking anything.
@@ -207,7 +207,7 @@ scripts/check-links.sh            # from the brain root
 scripts/check-links.sh ~/brain    # or point it somewhere
 ```
 
-It scans `BRAIN-INDEX.md`, `company/` and `products/` and reports broken links, leftover wikilinks, files without a parent line, orphans nothing links to, and cross-product links. It also reports a `CLAUDE.md.merge` or `templates/*.merge` that the installer left on a conflict. Fenced code blocks and inline code are skipped, so a file can show an example link. Exit code 1 on issues, so it works as a pre-commit hook or CI step for the brain repo. `/sync` and `/wrap-up` run it for you.
+It scans `BRAIN-INDEX.md`, `company/` and `products/` and reports broken links, anchors that match no heading in their file, leftover wikilinks, files without a parent line, orphans nothing links to, and cross-product links. It also reports a `CLAUDE.md.merge` or `templates/*.merge` that the installer left on a conflict. Fenced code blocks and inline code are skipped, so a file can show an example link. Exit code 1 on issues, so it works as a pre-commit hook or CI step for the brain repo. `/sync` and `/wrap-up` run it for you.
 
 ```bash
 scripts/check-claude-md.sh        # from the brain root
