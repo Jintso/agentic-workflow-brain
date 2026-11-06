@@ -46,12 +46,12 @@ cd agentic-workflow-brain
 This copies into the brain directory:
 
 - 10 slash commands → `.claude/commands/`
-- Templates → `templates/`
+- Templates → `templates/`, those you don't have yet
 - Three scripts → `scripts/`: the link checker, the `CLAUDE.md` path check, and the session clock
 - `CLAUDE.md`, if none exists
 - The version it installed → `.claude/brain-version`
 
-Re-running the installer upgrades the commands and scripts and leaves your templates and `CLAUDE.md` alone.
+Re-running the installer upgrades the commands and scripts, and merges what the templates changed into your templates and `CLAUDE.md`, keeping your own text.
 
 ### Versions
 
@@ -59,9 +59,18 @@ Each release has a version, `major.minor.patch`, a tag such as `v2.0.0`, and an 
 
 ### Upgrading
 
-Pull this repo and re-run `./install.sh /path/to/your/brain`. The commands and scripts are replaced, and the installer prints the new version over the one your brain had. Your `CLAUDE.md` and templates are kept, since they hold your own text, so they may lack a section the new commands cite. The installer says so when the templates changed between the version in `.claude/brain-version` and the new one, and prints the `git diff` that shows what is new. The changelog entries after your version say what to merge. A brain installed before 2.0.0 has no `.claude/brain-version`: the changelog's *Installed Before 2.0.0?* lists the template changes by date.
+Pull this repo and re-run `./install.sh /path/to/your/brain`. The commands and scripts are replaced, and the installer prints the new version over the one your brain had.
 
-Merge the new parts in by hand, or ask Claude in the brain:
+Your `CLAUDE.md` and templates hold your own text, so they are kept, and what the templates changed since the version in `.claude/brain-version` is merged into them. It is a three-way merge, as `git merge` does one, with the template of your brain's version as the base, so your text stays and the template's changes come in. The installer shows what each merge changed. In a brain kept in git, commit them like any other change.
+
+Where you and the template changed the same lines, the installer can't choose. It leaves your file as it is and writes the merge beside it, as `CLAUDE.md.merge` for example, with each conflict between `<<<<<<<` and `>>>>>>>` lines. Resolve them, then move the file over yours, or ask Claude in the brain:
+
+```
+Resolve the conflicts in CLAUDE.md.merge: keep my organisation's text and take the template's new rules.
+Show me the result, then move it over CLAUDE.md.
+```
+
+The merge needs your brain's version as a tag in this clone, so install from a git clone, not from a downloaded archive. Without the tag, or in a brain installed before 2.0.0, which has no `.claude/brain-version`, the installer keeps your files as they are and says so. The changelog entries after your version then say what to merge, and its *Installed Before 2.0.0?* lists the template changes by date. Merge them by hand, or ask Claude in the brain:
 
 ```
 Compare CLAUDE.md with <this repo>/templates/CLAUDE.md, and templates/ with <this repo>/templates/.

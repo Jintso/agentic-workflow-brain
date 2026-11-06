@@ -1,0 +1,51 @@
+🧠 Agentic Workflow Brain — Installer
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Brain:   @ROOT@/brain
+Version: 2.1.0, over 2.0.0
+
+Slash commands:
+  ✅ /resume
+
+Scripts:
+  ✅ scripts/check-links.sh
+
+Templates:
+  ⏭  templates/Handoff-Template.md (exists, kept)
+
+  ⚠️  CLAUDE.md (exists, kept: the merge has conflicts, in CLAUDE.md.merge)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Done. 1 commands installed, version 2.1.0 recorded in .claude/brain-version.
+
+Upgrading from 2.0.0: you and the template changed the same lines, so your
+copy was kept as it is, and the merge waits beside it with the conflicts marked:
+  CLAUDE.md.merge: 1 conflict, at line 4
+Resolve each between its <<<<<<< and >>>>>>> lines, then move the file over
+yours, without .merge. Or ask Claude in the brain to do both.
+What each release asks of you: @ROOT@/tool/CHANGELOG.md
+
+Next steps:
+  cd @ROOT@/brain
+  claude
+  /init-brain          # new brain
+  /migrate <old-vault> # or import an obsidian-brain vault
+
+Tip: version the brain with git so every session's changes are tracked:
+  git -C "@ROOT@/brain" init
+exit 0
+2.1.0
+--- CLAUDE.md
+# CLAUDE.md
+
+[PLACEHOLDER]
+Filled in.
+--- CLAUDE.md.merge
+# CLAUDE.md
+
+[PLACEHOLDER]
+<<<<<<< CLAUDE.md
+Filled in.
+=======
+- A new rule.
+>>>>>>> template 2.1.0

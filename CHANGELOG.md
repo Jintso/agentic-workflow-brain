@@ -1,12 +1,28 @@
 # Changelog
 
-What each release changed, newest first. A release that asks something of you when you upgrade says so under **Upgrade**: which parts of `templates/CLAUDE.md` or the templates to merge into your brain, or which command to run. The installer records the version it installed in your brain's `.claude/brain-version`, so the entries to read are the ones after that version.
+What each release changed, newest first. A release that asks something of you when you upgrade says so under **Upgrade**: which parts of `templates/CLAUDE.md` or the templates changed, or which command to run. Since 2.2.0 the installer merges the templates' changes into your brain itself, and leaves you only a conflict. The installer records the version it installed in your brain's `.claude/brain-version`, so the entries to read are the ones after that version.
 
 Versions are `major.minor.patch`:
 
 - **major:** an existing brain needs more than a merge, such as a new layout that `/migrate` moves it to
 - **minor:** a command gains behaviour, or a template or a rule in `templates/CLAUDE.md` changes
 - **patch:** a fix that asks nothing of you
+
+## 2.2.0 — 2026-11-06
+
+The installer merges what the templates changed into your `CLAUDE.md` and templates.
+
+### Added
+
+- On an upgrade, the installer merges what the templates changed since your brain's version into your `CLAUDE.md` and templates: three ways, with `git merge-file`, and the template of your brain's version as the base. It writes a clean merge and shows what it changed. Where you and the template changed the same lines, it leaves your file as it is and writes the merge, with its conflicts marked, to `<file>.merge` beside it. Before, it kept them and printed the `git diff` to merge by hand
+
+### Fixed
+
+- `session-times.sh` wrote "1 turns", and in a session's first turn "0 completed turns and the running one"
+
+### Upgrade
+
+- Nothing to merge by hand: this release changes no template. The installer of this release already merges, so a brain that skipped an earlier entry's merge gets those lines now, unless they conflict with yours. It needs your brain's version as a tag in the clone you install from
 
 ## 2.1.1 — 2026-11-06
 
