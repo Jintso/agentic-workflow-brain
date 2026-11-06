@@ -8,6 +8,16 @@ Versions are `major.minor.patch`:
 - **minor:** a command gains behaviour, or a template or a rule in `templates/CLAUDE.md` changes
 - **patch:** a fix that asks nothing of you
 
+## 2.1.1 — 2026-11-06
+
+### Fixed
+
+- `templates/CLAUDE.md` named `company/handoffs/`, which `/wrap-up` creates only at the first session that changes the brain itself. Until then `check-claude-md.sh` reported it as `MISSING`, in every new brain too. The line now points at `company/README.md`, which lists the handoffs once there are any
+
+### Upgrade
+
+- If you merged the `company/README.md` line of *Where Things Are* from 2.1.0, take this wording instead. If you didn't merge it yet, merge this one
+
 ## 2.1.0 — 2026-11-06
 
 A record for sessions that change the brain itself, and one rule for when the brain is committed.
