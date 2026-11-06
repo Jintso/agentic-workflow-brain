@@ -8,6 +8,17 @@ Versions are `major.minor.patch`:
 - **minor:** a command gains behaviour, or a template or a rule in `templates/CLAUDE.md` changes
 - **patch:** a fix that asks nothing of you
 
+## 2.5.0 — 2026-11-06
+
+### Added
+
+- `check-links.sh` checks each link's `#anchor` against the headings of its target file, as GitHub slugs them, and reports one that matches none as `ANCHOR`. Before, it dropped the anchor and checked only the file, so a link into a heading that was renamed, or moved to `Execution-Plan-Archive.md` with its phase, broke without a word. Its summary line counts the anchors. `/sync` gives the fix: point the link at the heading's current anchor, or ask if none fits
+- `templates/CLAUDE.md`, *Links*: a link to a heading uses GitHub's anchor for it
+
+### Upgrade
+
+- Nothing to merge by hand: the installer merges the new *Links* line into your `CLAUDE.md`. Then run `/sync`, which may find anchors that broke before this release
+
 ## 2.4.0 — 2026-11-06
 
 ### Added
