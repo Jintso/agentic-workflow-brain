@@ -16,7 +16,7 @@ Ten **Claude Code slash commands** plus a folder convention. Together they give 
 | Command | What it does |
 |---------|-------------|
 | `/init-brain` | Interactive wizard. Creates the shared structure and the first product. |
-| `/add-product` | Reads the product's code if it exists, checks its docs against it, interviews you about the rest, and generates its self-contained folder. |
+| `/add-product` | Reads the product's code and any spec kept elsewhere, checks the docs against the code, interviews you about the rest, and generates its self-contained folder. |
 | `/resume [product]` | Pulls the brain if it is in git, loads context, shows progress, recommends what to work on. |
 | `/wrap-up` | Captures session work, writes a handoff with the session's measured times, updates the execution plan, replaces the product's status, then commits and pushes the brain. |
 | `/status [product\|all]` | Portfolio dashboard across products, or a deep dive on one. |
@@ -100,6 +100,8 @@ Started this way, the code repo's hooks, permission rules and `CLAUDE.md` all ap
 The commands find the brain on their own: every brain path is relative to the **brain root**, the directory holding `BRAIN-INDEX.md` and `products/`, wherever it is attached. `/add-product` also offers to add a short *Brain* section to the code repo, so a session finds the brain even without the environment variable. The section holds paths on your machine. If the repo is cloned anywhere the brain is not (it is public, or cloned on a server, another PC, or for an agent), the section goes into `CLAUDE.local.md`, which is added to `.gitignore`, so the paths are neither published nor pushed to the other clones. Only a private repo used on this one machine gets it in `CLAUDE.md`.
 
 **A repo that tracks its own work.** If a repo already keeps `TODO.md`, `HANDOFF.md` or plan files, `/add-product` asks which place leads from now on, since two lists of open work drift apart. Usually the brain takes over. When something that cannot see the brain reads the repo's record, such as an agent working in a clone on another machine, the repo keeps leading: the product folder then holds the milestone, the priorities and short handoffs that point at the repo's resume point, and `/resume`, `/wrap-up` and `/feature` defer to the repo.
+
+**A spec kept elsewhere.** A product may start as a document: a spec on a wiki, a design note, a page on a server in your network. `/add-product` asks for one even when there is code, reads it before the interview, and drafts its answers from it. Its open points become findings, and personal data in it, such as names and amounts, stays out of the brain. Then it asks where the requirements live from now on. Usually the brain takes over: each section is carried into the product folder, with a table of where it went, and the document is frozen with a note pointing to the brain. If people or an agent work from the document, it keeps leading and the brain holds the plan and the decisions.
 
 **Portfolio work: start in the brain.** `/status all`, `/sprint all`, `/sync`, `/add-product`, `/migrate` and `/init-brain` need no code repo:
 

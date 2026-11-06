@@ -2,7 +2,7 @@
 
 You are adding a product to an existing brain. Each product gets a self-contained folder under `products/` with its own roadmap, engineering docs, product docs, operations docs and session history.
 
-The product may be new, or it may be an existing project with code and a history. An existing project has most of the answers written down already: read them there instead of asking for them.
+The product may be new, it may be an existing project with code and a history, or it may so far exist only as a spec or notes kept somewhere else. Wherever the answers are written down already, read them there instead of asking for them.
 
 **Before starting:** the brain must exist. If a directory holds the installed commands and `templates/` but no `BRAIN-INDEX.md`, the brain has not been initialised: tell the user to run `/init-brain` first and stop.
 
@@ -12,15 +12,19 @@ Every brain path in this command (`BRAIN-INDEX.md`, `products/...`, `templates/.
 
 ## Phase 1: Discovery Interview
 
-### Find the Code First
+### Find the Sources First
 
-Before asking anything else, establish whether code exists and where it lives.
+Before asking anything else, establish what already exists: code, and documents that describe the product.
+
+**Code.**
 
 - A path or URL given with the command is the code location.
 - If the working directory is a code repository that is neither the brain root nor the code location of a product in `products/README.md`, suggest it and confirm.
 - Otherwise ask: **Does code exist already, and where does it live?** Ask for a path or repository URL; "nowhere yet" is a valid answer.
 
-If the code location is a directory this session can read, inspect it before the interview. If there is no code yet, or only a URL, go straight to the interview and ask every question.
+**Documents.** Then ask: **Is the product already described in writing somewhere else?** For example a spec, a design note, a list of requirements, or a page on a wiki or on a server in the local network. Ask for a path or a URL for each; "no" is a valid answer. Ask even when there is code, since the inspection doesn't see a document kept outside the repo. A document inside the code repo is part of the inspection (items 2 and 7).
+
+If the code location is a directory this session can read, inspect it before the interview. Read each document this session can reach, see *Read the Documents*. If there is neither, go straight to the interview and ask every question.
 
 ### Inspect the Code Location
 
@@ -53,6 +57,17 @@ If the clone is behind, or holds uncommitted or unpushed work, say so and ask ho
 
 **A legacy vault is a case for `/migrate`.** If the repository holds a vault in the original layout (a `BRAIN-INDEX.md` with no `products/` beside it, numbered folders such as `00_Company/`), or if its `CLAUDE.md` or `.claude/commands` is a symlink into one, say so and point the user to `/migrate <path to the vault>`, which imports the vault and moves the repository onto this brain. Continue here only if the user wants a fresh product folder anyway.
 
+### Read the Documents
+
+Read only. No document changes in this phase, wherever it lives.
+
+- **Reach it from this machine.** Read a file by its path. Fetch a page by its URL; a web-fetch tool may not reach a host on the local network, so use `curl` from the shell for one. If a document cannot be read, say so and ask the user for a copy. The rule against copying a secret holds here too, for the document's content and for any login used to reach it.
+- **Note what it is:** its title, where it lives, who wrote it and how (by hand, with a tool, with an agent), when it was created and last changed, and who reads or edits it now. A document that people, a tool or an agent other than its author work from is a reason for it to keep leading (question 9).
+- **Read it as a source.** It gives drafts for the interview, the features, the decisions already taken and the constraints. Where it disagrees with the code, the code is right: write the brain's files from the code, and record the claim as a finding, as for the docs (*Inspect the Code Location*, item 2).
+- **Collect its open points:** questions it leaves open, decisions it defers, sections that contradict each other, numbers that don't add up. They are findings (Phase 2), not edits to the document.
+- **Keep personal data out of the brain,** as a secret is kept out: names, amounts of money, account numbers, addresses, health. The brain says "the owner", or names the setting the value belongs in, and says that the document holds the figure.
+- **Its date may start the product.** For a product with no code, work began when its earliest document was created (*Started*, Phase 2).
+
 ### The Interview
 
 Ask **one at a time**, conversationally. If the product name was already given (for example by `/init-brain`), skip question 1.
@@ -67,14 +82,17 @@ Ask **one at a time**, conversationally. If the product name was already given (
 8. **Where is open work tracked from now on?** Ask only when the inspection found work tracked in the repo. Two lists of open work drift apart, so one place leads:
    - **The brain leads** (recommend it by default). The open items of the repo's files are carried into the execution plan and the feature priorities. Then ask what becomes of each file: a pointer to the brain, a frozen record with a line saying it is no longer updated, or left as it is. If the repo's `CLAUDE.md` describes the old workflow, it needs a change too. Changes to the repo are made in Phase 3, after asking.
    - **The repo leads** (recommend it when something outside this machine reads the repo's record). The repo's files stay the working record, and the product folder holds the product view: see *When the Repo Leads* in Phase 2.
+9. **Where do the requirements live from now on?** Ask only when a document was read. Two sets of requirements drift apart, so one place leads:
+   - **The brain leads** (recommend it by default). Every section of the document is carried into the product folder (Phase 2), and from then on a requirement changes in the brain. The document becomes a frozen record, with a note at its top that says so and points to the brain (Phase 3, step 7).
+   - **The document leads** (recommend it when people, a tool or an agent other than its author work from it). It stays the requirements of record, and the product folder holds the plan, the design and the decisions: see *When a Document Leads* in Phase 2.
 
-**After an inspection, do not ask what the code already answered.** Show what you found first: a draft answer for every question the inspection covers, each with its source (`README.md`, the git history, `Cargo.toml`). Let the user correct the drafts. Count every number in them from its source; do not estimate. List the findings of the docs check with them, and the state of the clone against its remote. Then ask the open questions one at a time. Questions 4 and 6 are decisions, not facts: always ask them, and question 8 whenever it applies. You may suggest answers from what you found, marked as suggestions. If the docs check found several mismatches, suggest bringing the docs in line with the code as one of the priorities.
+**After an inspection or a document, do not ask what they already answered.** Show what you found first: a draft answer for every question they cover, each with its source (`README.md`, the git history, `Cargo.toml`, a section of the spec). Let the user correct the drafts. Count every number in them from its source; do not estimate. List the findings of the docs check and the open points of the documents with them, and the state of the clone against its remote. Then ask the open questions one at a time. Questions 4 and 6 are decisions, not facts: always ask them, even when a document states priorities or a milestone, and questions 8 and 9 whenever they apply. You may suggest answers from what you found, marked as suggestions. If the docs check found several mismatches, suggest bringing the docs in line with the code as one of the priorities.
 
 Then propose a **slug**: the product name in lowercase kebab-case (`Addon Manager` → `addon-manager`). Confirm it with the user. It must not match an existing folder in `products/`.
 
 ## Phase 2: Generate the Product Folder
 
-Create `products/<slug>/` with this structure. Every file gets **real content from the answers and the inspection**, not empty templates.
+Create `products/<slug>/` with this structure. Every file gets **real content from the answers, the inspection and the documents**, not empty templates.
 
 ```
 products/<slug>/
@@ -135,7 +153,7 @@ products/<slug>/
    - **Last updated:** [today's date]
    ```
 
-   *Started* is when work on the product began, not when it entered the brain. For existing code it is the date of the first commit, or the date the user gives if there is no git history. For a new product it is today's date. Leave out the *Added to this brain* line when both dates are the same. Leave out *Latest commit* when there is no code yet.
+   *Started* is when work on the product began, not when it entered the brain. For existing code it is the date of the first commit, or the date the user gives if there is no git history. For a product with no code it is the date its earliest document was created, if one was read; otherwise today's date. Leave out the *Added to this brain* line when both dates are the same. Leave out *Latest commit* when there is no code yet.
 
    *Current Status* holds the present only: `/wrap-up` replaces it at each session's end and never appends a session's story, which is the handoff's (`CLAUDE.md`, *File Conventions*, *Content*).
 
@@ -161,7 +179,7 @@ products/<slug>/
 
    The size rule of 3–4 phases with 3–5 steps is for the open work. The completed part takes as many phases as the history needs, but keep it coarse: a phase per major version or period of work, a step per feature or release, never a step per commit. The tasks name the commits; the log keeps the detail. For a long history, merge steps before adding more.
 
-3. **Product-level docs** (`MVP-Scope.md`, `Feature-Priorities.md`, `User-Stories.md`) — Parent line `> Part of [Product Name](README.md)`. Derived from the interview and the inspection: the milestone defines the MVP scope, the priorities seed the feature list, the target users seed the stories. Cross-link them (`MVP-Scope.md` ↔ `Feature-Priorities.md` ↔ `User-Stories.md`).
+3. **Product-level docs** (`MVP-Scope.md`, `Feature-Priorities.md`, `User-Stories.md`) — Parent line `> Part of [Product Name](README.md)`. Derived from the interview, the inspection and the documents: the milestone defines the MVP scope, the priorities seed the feature list, the target users seed the stories. Cross-link them (`MVP-Scope.md` ↔ `Feature-Priorities.md` ↔ `User-Stories.md`).
 
    The findings of the docs check go into `Feature-Priorities.md`, in a section *Findings in the Docs*. Say which commit was checked and what was not checked, then one row per finding:
 
@@ -173,13 +191,30 @@ products/<slug>/
 
    *Since* is the commit that made the doc wrong, when the history shows it. Leave the section out when the check found nothing, and say so in the summary.
 
-4. **Folder indexes** (`features/README.md`, `engineering/README.md`, `operations/README.md`, `handoffs/README.md`, `engineering/adr/README.md`) — Parent line pointing to the product README (the ADR index points to `engineering/README.md`). Describe what the folder covers and link every file in it. `features/README.md` starts with an empty *Index* list; `/feature` adds specs there.
+   The open points of a document go into `Feature-Priorities.md` too, in a section *Findings in [document title]*. Say when the document was read and its last change, then one row per point:
 
-5. **Leaf files** — Parent line pointing to their folder's `README.md`. Real content derived from the interview and the inspection. Cross-link related files (`Architecture.md` ↔ `Tech-Stack.md`). Where neither gave anything (for example no monitoring yet), write a short note saying so and what the likely first step is, rather than leaving the file empty.
+   ```markdown
+   | # | Section | Open point | State |
+   |---|---------|------------|-------|
+   | 1 | 4. Data inputs | Which export is read first is not decided | open |
+   ```
+
+4. **Folder indexes** (`features/README.md`, `engineering/README.md`, `operations/README.md`, `handoffs/README.md`, `engineering/adr/README.md`) — Parent line pointing to the product README (the ADR index points to `engineering/README.md`). Describe what the folder covers and link every file in it. `features/README.md` starts with an empty *Index* list; `/feature` adds specs there. A document the brain now leads fills it at once (item 8).
+
+5. **Leaf files** — Parent line pointing to their folder's `README.md`. Real content derived from the interview, the inspection and the documents. Cross-link related files (`Architecture.md` ↔ `Tech-Stack.md`). Where neither gave anything (for example no monitoring yet), write a short note saying so and what the likely first step is, rather than leaving the file empty.
 
 6. **handoffs/README.md** — Explain that `/wrap-up` writes `handoff-NNN.md` here and `/resume` reads the latest one. Include an empty *Index* list.
 
-7. **ADR-001** — If question 8 was asked, record the answer as `engineering/adr/ADR-001-<topic>.md` from `templates/ADR-Template.md`, listed in the ADR index: the repo's files and their state, who reads them, the decision, what becomes of each file, and the alternative not chosen.
+7. **ADR-001** — If question 8 or 9 was asked, record each answer as an ADR from `templates/ADR-Template.md`, numbered from `engineering/adr/ADR-001-<topic>.md` and listed in the ADR index.
+   - For question 8: the repo's files and their state, who reads them, the decision, what becomes of each file, and the alternative not chosen.
+   - For question 9: the document, where it lives and who reads or edits it, the decision, what becomes of the document, what was not carried over and why, and the alternative not chosen.
+
+8. **A document the brain leads** (question 9). Carry every section of it into the folder, in the form the brain uses for it:
+   - A feature it describes becomes a spec in `features/` from `templates/Feature-Spec-Template.md`, listed in the *Index*.
+   - Its purpose, scope and users go into the README, `MVP-Scope.md` and `User-Stories.md`. Its architecture and deployment go into `engineering/` and `operations/`.
+   - A decision it records goes into the spec it concerns; a large one gets an ADR.
+
+   `features/README.md` gets a section *Where [document title] Went* after the *Index*: the document's title, where it lives and its dates, then one row per section of the document naming the files it went into, then a line saying what was not carried over and why (personal data, see *Read the Documents*). The specs say that they are the requirements of record from now on.
 
 ### When the Repo Leads
 
@@ -189,6 +224,14 @@ If the answer to question 8 is that the repo leads, the repo's files stay the wo
 - **Execution-Plan.md** stays at the level of the milestone. A step names the entry or plan file in the repo by path and does not restate its tasks. Say so at the top of the plan.
 - **features/README.md** says where specs are written in the repo, and with which command. The *Index* stays empty. `/feature` is for a spec that concerns the brain only.
 - **handoffs/README.md** says that a handoff here is short and points at the repo's resume point, with a table of what it holds: the pointer (the repo's session and commit), the steps of the plan that moved, what concerns only the brain, and what waits for the user. Where the brain and the repo disagree, the repo is right.
+
+### When a Document Leads
+
+If the answer to question 9 is that the document leads, it stays the requirements of record and the brain must not grow a second set. Change the files above as follows:
+
+- **README.md** gets a section *Where the Requirements Are* that names the document, says where it lives, and links its ADR.
+- **features/README.md** says that the requirements are in the document. A spec here is written only for what the document leaves out, and names the section it builds on instead of restating it. The *Index* starts empty.
+- **Feature-Priorities.md** ranks the features by the document's sections. Its findings are settled in the document, by whoever keeps it.
 
 ### Link Rules
 
@@ -201,7 +244,7 @@ If the answer to question 8 is that the repo leads, the repo's files stay the wo
 1. Add a row to the table in `products/README.md`: `| [Name](<slug>/README.md) | status | Phase N — Name | — | code location |`. The phase is the current one from the execution plan: Phase 1 for a new product. Write a code location on this machine as a path in backticks (`` `~/code/addon-manager` ``): `scripts/check-claude-md.sh` finds the repo's `CLAUDE.md`, `CLAUDE.local.md` and `.claude/CLAUDE.md` from it.
 2. Add a bullet under *Products* in `BRAIN-INDEX.md`: `- [Name](products/<slug>/README.md) — one-liner — **status**, Phase N`
 3. If `company/Vision.md` lists products, add this one.
-4. If the code lives in its own repository, offer to add a *Brain* section to it. The section lets a session started there find the brain even when the brain's `CLAUDE.md` is not loaded. It holds absolute paths on this machine, so where it goes depends on where the repository is cloned. A clone where the brain does not exist would be pointed at a brain it cannot reach, whether a person, a second machine or an agent works in it:
+4. If the code lives in its own repository, offer to add a *Brain* section to it. If there is no repository yet, add a task to the step of the plan that creates it instead: "Add the *Brain* section, as `/add-product` Phase 3, step 4 describes." The section lets a session started there find the brain even when the brain's `CLAUDE.md` is not loaded. It holds absolute paths on this machine, so where it goes depends on where the repository is cloned. A clone where the brain does not exist would be pointed at a brain it cannot reach, whether a person, a second machine or an agent works in it:
 
    | File | Use it when | Effect |
    |------|-------------|--------|
@@ -231,11 +274,12 @@ If the answer to question 8 is that the repo leads, the repo's files stay the wo
    When the repo leads (question 8), the last sentence names the repo's own steps too, in their order: for example "Start with `/resume <slug>`, then `/pickup`. End with `/wrapup`, then `/wrap-up`."
 5. If the brain leads (question 8) and the user chose to change the repo's tracking files, make those changes now, under the same rules as step 4: ask first and name the files, check for symlinks, do not commit. Carry every open item into the brain before a file becomes a pointer.
 6. If the per-project memory holds entries that are no longer true, or open work that the brain now tracks, propose an edit for each: a correction, a removal, or a line pointing at the brain. Memory lies outside both the brain and the repo, so change a file only after the user agrees to that edit. If the edit is refused or blocked, list the exact change in the summary for the user to make.
+7. If the brain leads (question 9), the document needs a note at its top: that it is frozen since today, and that the requirements are in the brain from now on, with the product folder's path. If this session can edit the document, a file on this machine, offer to add the note under the rules of step 4: ask first, check for a symlink, do not commit. Otherwise give the user the note's text, and add a task to the plan's first step to add it.
 
 ## Phase 4: Verify and Summarise
 
 1. Run `scripts/check-links.sh` and fix anything it reports.
 2. Show the tree of created files and the count.
-3. **Summarise from the product folder.** Report what the inspection read and at which commit, how the clone stands against its remote, the findings of the docs check and what was not checked, the answer to question 8, the memory entries proposed for an edit or belonging elsewhere, and what changed in the code repo and is left to commit. Before you show it, check each statement against the product folder: every finding, decision and open item must be in one of its files, and every number must be counted from them. Add to the folder what is missing there, and run the link checker again if a file changed. Then say where each part is recorded.
+3. **Summarise from the product folder.** Report what the inspection read and at which commit, how the clone stands against its remote, the findings of the docs check and what was not checked, the answer to question 8, the documents read with their open points, the answer to question 9 and what was not carried over, the memory entries proposed for an edit or belonging elsewhere, and what changed in the code repo and is left to commit. Before you show it, check each statement against the product folder: every finding, decision and open item must be in one of its files, and every number must be counted from them. Add to the folder what is missing there, and run the link checker again if a file changed. Then say where each part is recorded.
 4. If the code lives in its own directory, give the user the start command for product work and suggest a shell alias for it: `cd <code path> && CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir <brain root>`. Starting in the code repo is what makes its hooks, permission rules and `CLAUDE.md` load.
 5. Suggest `/resume <slug>`.
