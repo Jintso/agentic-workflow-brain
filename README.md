@@ -17,7 +17,7 @@ Ten **Claude Code slash commands** plus a folder convention. Together they give 
 |---------|-------------|
 | `/init-brain` | Interactive wizard. Creates the shared structure and the first product. |
 | `/add-product` | Reads the product's code and any spec kept elsewhere, checks the docs against the code, interviews you about the rest, and generates its self-contained folder. |
-| `/resume [product]` | Pulls the brain if it is in git, loads context, shows progress, recommends what to work on. |
+| `/resume [product]` | Pulls the brain if it is in git, loads context, shows progress, recommends what to work on. `/resume brain` picks up the last session that changed the brain itself. |
 | `/wrap-up` | Captures session work, writes a handoff with the session's measured times (the brain's own in `company/handoffs/` when the session changed the brain itself), updates the execution plan, replaces the product's status, then commits what is left and pushes the brain. The only command that pushes. |
 | `/status [product\|all]` | Portfolio dashboard across products, or a deep dive on one. |
 | `/plan [product] <step>` | Breaks an execution plan step into concrete tasks. |

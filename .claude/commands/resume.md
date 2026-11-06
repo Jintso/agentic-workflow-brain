@@ -21,11 +21,14 @@ A brain kept in git may have been pushed to from another machine since the last 
 Read `BRAIN-INDEX.md` and `products/README.md`, then apply the Product Resolution rule from `CLAUDE.md`:
 
 - `/resume <slug>` → that product. If the slug matches no folder in `products/`, list the products and ask.
+- `/resume brain`, when no product folder is named `brain` → the brain itself, see below.
 - No argument, and the working directory is a product's code location or inside it → that product.
 - No argument and one product → that product.
-- No argument and several products → show one line per product (name, status, phase, date of last handoff), suggest the one with the most recent handoff, and ask.
+- No argument and several products → show one line per product (name, status, phase, date of last handoff), suggest the one with the most recent handoff, and ask. If `company/handoffs/` exists, add one line for the brain itself: the date and focus of its latest handoff.
 
 Call the chosen folder `products/<slug>/` below.
+
+**The brain itself.** When the user picks the brain, read the highest-numbered file in `company/handoffs/`, the record of the last session that changed the brain rather than a product. Skip Steps 2 and 3: brief from that handoff, with what it did, its open questions and its *Next Session Recommendations*, and no progress bars, since the brain has no plan. Then go to Step 4. If `company/handoffs/` doesn't exist, say that no session has recorded brain-level work yet, and list the products.
 
 ## Step 2: Load Context
 
