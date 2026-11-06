@@ -1,0 +1,3 @@
+VERSION is major.minor.patch
+the newest entry in CHANGELOG.md is VERSION
+every entry's heading has a date

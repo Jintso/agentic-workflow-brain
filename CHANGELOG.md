@@ -1,0 +1,52 @@
+# Changelog
+
+What each release changed, newest first. A release that asks something of you when you upgrade says so under **Upgrade**: which parts of `templates/CLAUDE.md` or the templates to merge into your brain, or which command to run. The installer records the version it installed in your brain's `.claude/brain-version`, so the entries to read are the ones after that version.
+
+Versions are `major.minor.patch`:
+
+- **major:** an existing brain needs more than a merge, such as a new layout that `/migrate` moves it to
+- **minor:** a command gains behaviour, or a template or a rule in `templates/CLAUDE.md` changes
+- **patch:** a fix that asks nothing of you
+
+## 2.0.0 — 2026-11-06
+
+The multi-product brain, rebuilt from 1.0.0 on 2026-09-25 and released for the first time. One brain holds every product of an organisation, each in `products/<slug>/`, and a product session starts in its code repo with the brain attached.
+
+### Added
+
+- Ten commands: `/init-brain`, `/add-product`, `/migrate`, `/resume`, `/wrap-up`, `/plan`, `/feature`, `/sprint`, `/status`, `/sync`
+- `/add-product` reads what exists before it asks: the code, the repo's docs and history, and a document kept outside the repo
+- `/migrate` imports a 1.0.0 vault into `products/<slug>/`, and leaves the old vault as it was
+- Three scripts: `check-links.sh` (the link graph), `check-claude-md.sh` (the paths each `CLAUDE.md` names) and `session-times.sh` (a session's measured times, for the handoff)
+- A brain kept in git: `/resume` pulls it, and `/wrap-up` commits and pushes only the session's own files
+- `Execution-Plan-Archive.md` in each product, for finished phases
+- `tests/run.sh`, regression cases for the scripts and the installer, run by CI on Ubuntu and macOS
+- `VERSION`, this changelog, and `.claude/brain-version` in the brain
+
+### Changed
+
+- Standard markdown links instead of wikilinks, and a `README.md` in every folder instead of numbered folders
+- `templates/CLAUDE.md` is a map: the rules that hold on every edit, and a pointer for the rest
+- The installer asks for a merge only when the templates changed since the version a brain has. Before, it asked whenever a brain's `CLAUDE.md` differed from the template, which after `/init-brain` is always
+
+### Upgrade
+
+- **From 1.0.0:** install into a new directory and run `/migrate /path/to/old-vault`, as the README's *Migrating From previous version* says
+- **From an install made between 2026-09-25 and this release:** your brain has no `.claude/brain-version`, so the installer can't tell which templates you have. Merge the changes after your install date from *Installed Before 2.0.0?* below
+
+## Installed Before 2.0.0?
+
+Between the rebuild and 2.0.0, `main` was the release, and six commits changed what the installer keeps in your brain instead of replacing. If you installed between two of them, merge what came after. `git -C <this repo> show <commit> -- templates/` shows each one.
+
+| Date | Commit | What changed |
+|------|--------|--------------|
+| 2026-11-06 | `0d45104` | `CLAUDE.md`: *Session Protocol* pulls the brain at the start and commits and pushes it at the end; a new section, *The Brain in Git* |
+| 2026-10-22 | `650e898` | `CLAUDE.md`, *Naming*: the folder example is `addon-manager/`, which `check-claude-md.sh` doesn't read as a path |
+| 2026-10-22 | `d196916` | `CLAUDE.md` rewritten as a map: *Where Things Are* replaces *Layout*; new are *Compact Instructions*, *Content* (a summary under each title, templates, status that holds only the present), the archive rule for finished phases, the fork rule, and two standing conventions (times are measured; a `CLAUDE.md` is a map). `Handoff-Template.md`: *Duration* becomes *Time*, from `session-times.sh`. `templates/README.md`: the installer places `CLAUDE.md` |
+| 2026-09-29 | `2a4b880` | `CLAUDE.md`, *Code Location*: the *Brain* section goes into `CLAUDE.local.md` whenever a clone of the repo lives where the brain is not |
+| 2026-09-28 | `8121d60` | `CLAUDE.md`, *Code Location*: the *Brain* section goes into `CLAUDE.local.md` when the repo is public. Replaced by `2a4b880` |
+| 2026-09-28 | `7311f58` | `CLAUDE.md`: a new section, *Brain Root*; a product is also found from the working directory; *Code Location* starts product sessions in the code repo with the brain attached |
+
+## 1.0.0 — 2026-03-25
+
+*obsidian-brain*: one product per vault, eight commands (`/init-brain`, `/resume`, `/wrap-up`, `/plan`, `/feature`, `/sprint`, `/status`, `/sync`), numbered folders such as `00_Company/`, and wikilinks. Tagged afterwards, on 2026-11-06, so that the vaults `/migrate` imports have a version.
