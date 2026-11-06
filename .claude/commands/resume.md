@@ -38,6 +38,13 @@ Read in this order. If a file is missing, say so and continue.
 2. `products/<slug>/Execution-Plan.md` — roadmap with phase and step statuses
 3. The highest-numbered file in `products/<slug>/handoffs/`. If none exists, this is the first session for this product.
 
+**Pull the code.** The product's code may have been pushed from another machine as well. For each code location in the README's `**Code:**` that is a git repository on this machine, note `git -C <repo> rev-parse HEAD`, then run `git -C <repo> pull --ff-only`, as Step 0 does for the brain. Pull only this product's repos, never another product's. Put one line per repo in the briefing:
+
+- Pulled → the branch, and the commits that came in (`git -C <repo> log --oneline <noted HEAD>..`), or that it was already up to date.
+- Not on this machine, not a git repository, or a branch with no upstream → say so and continue.
+- Uncommitted changes, or commits ahead of the remote → show them (`git status --short --branch`). They are the repo's, and its own rules say when they are committed and pushed. They don't stop the pull, since `--ff-only` refuses rather than overwrite a changed file.
+- The pull fails (offline, a refused overwrite, or the histories diverged) → continue with the local copy and tell the user why. Never merge, rebase, stash, reset or switch branches in a code repo on your own.
+
 If the product README says the repo leads (a section *Where Work Is Tracked*), the handoff points at a resume point in the repo. Name it in the briefing, and tell the user to run the repo's own start step next if it has one.
 
 Do not read every file in the brain. Open department files such as `engineering/Architecture.md` only when the chosen work needs them.
