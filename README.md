@@ -49,12 +49,19 @@ This copies into the brain directory:
 - Templates → `templates/`
 - Three scripts → `scripts/`: the link checker, the `CLAUDE.md` path check, and the session clock
 - `CLAUDE.md`, if none exists
+- The version it installed → `.claude/brain-version`
 
 Re-running the installer upgrades the commands and scripts and leaves your templates and `CLAUDE.md` alone.
 
+### Versions
+
+Each release has a version, `major.minor.patch`, a tag such as `v2.0.0`, and an entry in [CHANGELOG.md](CHANGELOG.md). *Major* means an existing brain needs more than a merge, *minor* that a command gains behaviour or a template changes, *patch* that nothing is asked of you. An entry that asks something of you says so under **Upgrade**. `main` is the latest release. To install an earlier one, `git checkout v2.0.0` before running the installer.
+
 ### Upgrading
 
-Pull this repo and re-run `./install.sh /path/to/your/brain`. The commands and scripts are replaced. Your `CLAUDE.md` and templates are kept, since they hold your own text, so they may lack a section the new commands cite. The installer says so when one of them differs from the version it ships. Merge the new parts in by hand, or ask Claude in the brain:
+Pull this repo and re-run `./install.sh /path/to/your/brain`. The commands and scripts are replaced, and the installer prints the new version over the one your brain had. Your `CLAUDE.md` and templates are kept, since they hold your own text, so they may lack a section the new commands cite. The installer says so when the templates changed between the version in `.claude/brain-version` and the new one, and prints the `git diff` that shows what is new. The changelog entries after your version say what to merge. A brain installed before 2.0.0 has no `.claude/brain-version`: the changelog's *Installed Before 2.0.0?* lists the template changes by date.
+
+Merge the new parts in by hand, or ask Claude in the brain:
 
 ```
 Compare CLAUDE.md with <this repo>/templates/CLAUDE.md, and templates/ with <this repo>/templates/.
@@ -198,9 +205,9 @@ scripts/check-claude-md.sh        # from the brain root
 
 It reads the files Claude Code loads as project memory (`CLAUDE.md`, `CLAUDE.local.md`, `.claude/CLAUDE.md`) in the brain and at every product's code location (the *Code* column of `products/README.md`), and reports each path in backticks that no longer exists, so a pointer doesn't outlive the file it points to. It also reports a symlinked file whose target is gone, a code location with none of the files, and one that isn't on this machine. Home and absolute paths are checked only in `CLAUDE.local.md`, the one file that holds paths on this machine, such as the brain root. Placeholders, commands, URLs, examples (after "for example" or "e.g." on their line) and git-ignored paths are skipped. `/sync` runs it.
 
-## Migrating From previous version, obsidian-brain
+## Migrating From obsidian-brain, 1.0.0
 
-If you have a vault from the original single-product version (numbered `00_Company/` folders, wikilinks), install this into a new directory and run:
+If you have a vault from the original single-product version, 1.0.0 (numbered `00_Company/` folders, wikilinks), install this into a new directory and run:
 
 ```
 /migrate /path/to/old-vault
@@ -231,7 +238,7 @@ If you add top-level brain folders beyond `company/` and `products/`, add them t
 
 ## Testing the Scripts
 
-`tests/run.sh` runs a case for each thing the three scripts were built or fixed to do, and exits 1 if any output differs from the one recorded:
+`tests/run.sh` runs a case for each thing the three scripts and the installer were built or fixed to do, and exits 1 if any output differs from the one recorded. CI runs it on Ubuntu and on macOS, with a Mac's own bash 3.2, for every pull request, and `shellcheck` over every shell file:
 
 ```bash
 tests/run.sh                    # every case
@@ -239,7 +246,7 @@ tests/run.sh session-times      # one script's cases
 tests/run.sh --update           # record the output again, then review it with git diff
 ```
 
-A case is `tests/<script>/<case>.sh`, which builds a small brain, repo or transcript in an empty temporary folder and runs the script on it, next to `<case>.expected`. Its first line says what it checks. The tests need only bash and what the scripts need, and `install.sh` doesn't copy them into the brain. When you change a script, add a case for the change. Run the script on a real brain too: a fixture holds only what someone thought of.
+A case is `tests/<script>/<case>.sh`, which builds a small brain, repo, transcript or copy of the tool in an empty temporary folder and runs the script on it, next to `<case>.expected`. Its first line says what it checks. The tests need only bash and what the scripts need, and `install.sh` doesn't copy them into the brain. When you change a script, add a case for the change. Run the script on a real brain too: a fixture holds only what someone thought of.
 
 ## Tips
 

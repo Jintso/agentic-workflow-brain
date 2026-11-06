@@ -31,7 +31,7 @@ The multi-product brain, rebuilt from 1.0.0 on 2026-09-25 and released for the f
 
 ### Upgrade
 
-- **From 1.0.0:** install into a new directory and run `/migrate /path/to/old-vault`, as the README's *Migrating From previous version* says
+- **From 1.0.0:** install into a new directory and run `/migrate /path/to/old-vault`, as the README's *Migrating From obsidian-brain, 1.0.0* says
 - **From an install made between 2026-09-25 and this release:** your brain has no `.claude/brain-version`, so the installer can't tell which templates you have. Merge the changes after your install date from *Installed Before 2.0.0?* below
 
 ## Installed Before 2.0.0?
