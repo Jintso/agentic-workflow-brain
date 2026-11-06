@@ -8,6 +8,16 @@ Versions are `major.minor.patch`:
 - **minor:** a command gains behaviour, or a template or a rule in `templates/CLAUDE.md` changes
 - **patch:** a fix that asks nothing of you
 
+## 2.6.0 — 2026-11-06
+
+### Added
+
+- A product's `README.md` can tell `/resume` not to pull a code repo, with a line under `**Code:**`: `**Code pull:** skip — <reason>`. `/resume` then leaves that repo as it is and says in the briefing that it wasn't pulled, and why. Some repos have their own rules for when the checkout is pulled, such as one an editor holds open, where a pull rewrites files under the editor, or one whose agents move it themselves. Before, `/resume` pulled them anyway, or reported the refused pull at every session. `/add-product` writes the line when the repo's rules or the user say so, and leaves it out otherwise: pulling stays the default
+
+### Upgrade
+
+- Nothing to merge by hand: this release changes no template. Add the `**Code pull:**` line to the `README.md` of any product whose code repo `/resume` shouldn't pull
+
 ## 2.5.0 — 2026-11-06
 
 ### Added

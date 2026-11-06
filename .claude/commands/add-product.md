@@ -46,7 +46,7 @@ If the clone is behind, or holds uncommitted or unpushed work, say so and ask ho
 3. **The history.** `git log`: the date of the first commit, the date of the latest one, and the tags. The first commit dates the start of the product. The log shows what is already done.
 4. **Public or private, and other clones.** `git remote -v` shows where the repository is published. Find out whether it is public, for example with `gh repo view --json visibility`. Then look for clones on other machines: authors in `git log` other than the user, such as an agent's commits; docs or deploy scripts that clone the repo onto a server; notes about resuming on another PC. If you cannot tell, ask in the interview. Phase 3 depends on both answers.
 5. **Operations.** CI configuration, container files, deployment scripts.
-6. **Claude Code entry points.** List the repository root and its `.claude/` folder with `ls -la`. A listing of regular files hides symlinks. Note `CLAUDE.md`, `CLAUDE.local.md`, commands, skills and settings files, and where each symlink points. Project rules in `CLAUDE.md` are a source for `engineering/Conventions.md`.
+6. **Claude Code entry points.** List the repository root and its `.claude/` folder with `ls -la`. A listing of regular files hides symlinks. Note `CLAUDE.md`, `CLAUDE.local.md`, commands, skills and settings files, and where each symlink points. Project rules in `CLAUDE.md` are a source for `engineering/Conventions.md`. If they say when the checkout is pulled, for example never at a session's start because an editor holds it open or the repo's agents move it themselves, note it for the README's `**Code pull:**` line (Phase 2, item 1).
 
    Compare the names of the repo's commands and skills with the brain's ten commands. Both sets load in a session started in the repo. With the same name, the repo's copy runs and hides the brain's: say which. With names that nearly collide or jobs that overlap (`/wrapup` and `/wrap-up`, `/pickup` and `/resume`), the user must know which to run and in which order. Record both cases in `engineering/Conventions.md`, and settle the order with the user (see *When the Repo Leads* in Phase 2).
 7. **Work tracked in the repo.** A repo may already track its own work: `TODO.md`, `HANDOFF.md`, `ROADMAP.md`, a `plans/` or `docs/handoff/` folder, issues on the forge, and commands or skills that write them. For each, note what it holds, when it last changed (`git log -1 -- <path>`), and who reads it: people, a CI job, an agent working in another clone, a session on a machine without this brain. A record that something outside this machine reads is a reason for the repo to keep leading (question 8).
@@ -133,6 +133,7 @@ products/<slug>/
 
    **Status:** active
    **Code:** [path, URL, or "not started"]
+   **Code pull:** skip — [why /resume must not pull the repo]
    **Stack:** [short list]
    **Started:** [date work on the product began]
    **Added to this brain:** [today's date]
@@ -156,6 +157,8 @@ products/<slug>/
    ```
 
    *Started* is when work on the product began, not when it entered the brain. For existing code it is the date of the first commit, or the date the user gives if there is no git history. For a product with no code it is the date its earliest document was created, if one was read; otherwise today's date. Leave out the *Added to this brain* line when both dates are the same. Leave out *Latest commit* when there is no code yet.
+
+   *Code pull* is there only when the repo's own rules say when its checkout is pulled, as its docs (Phase 1, item 6) or the user said: an editor holds the checkout open, for example, or the repo's agents move it themselves. `/resume` then leaves the repo as it is and gives the reason in its briefing, so write the reason in a few words. When *Code* names several repos, name each one to skip, with `; ` between them: `` **Code pull:** skip `~/code/game` — the editor holds it open ``. Leave the line out otherwise: `/resume` pulls every repo in *Code*, fast-forward only.
 
    *Current Status* holds the present only: `/wrap-up` replaces it at each session's end and never appends a session's story, which is the handoff's (`CLAUDE.md`, *File Conventions*, *Content*).
 

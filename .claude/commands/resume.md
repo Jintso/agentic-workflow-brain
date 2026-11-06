@@ -38,8 +38,9 @@ Read in this order. If a file is missing, say so and continue.
 2. `products/<slug>/Execution-Plan.md` — roadmap with phase and step statuses
 3. The highest-numbered file in `products/<slug>/handoffs/`. If none exists, this is the first session for this product.
 
-**Pull the code.** The product's code may have been pushed from another machine as well. For each code location in the README's `**Code:**` that is a git repository on this machine, note `git -C <repo> rev-parse HEAD`, then run `git -C <repo> pull --ff-only`, as Step 0 does for the brain. Pull only this product's repos, never another product's. Put one line per repo in the briefing:
+**Pull the code.** The product's code may have been pushed from another machine as well. For each code location in the README's `**Code:**` that is a git repository on this machine, note `git -C <repo> rev-parse HEAD`, then run `git -C <repo> pull --ff-only`, as Step 0 does for the brain. Pull only this product's repos, never another product's, and none that the README's `**Code pull:**` line marks `skip`. Put one line per repo in the briefing:
 
+- Marked `skip` → not pulled: say so, with the reason the line gives and the branch (`git -C <repo> branch --show-current`). The repo's own rules say when its checkout is pulled, so run nothing in it that changes it.
 - Pulled → the branch, and the commits that came in (`git -C <repo> log --oneline <noted HEAD>..`), or that it was already up to date.
 - Not on this machine, not a git repository, or a branch with no upstream → say so and continue.
 - Uncommitted changes, or commits ahead of the remote → show them (`git status --short --branch`). They are the repo's, and its own rules say when they are committed and pushed. They don't stop the pull, since `--ff-only` refuses rather than overwrite a changed file.
