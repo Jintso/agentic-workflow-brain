@@ -107,9 +107,9 @@ Run the link checker (see *Brain Root*). Fix everything it reports before finish
 
 Running `/wrap-up` is the user's go-ahead to commit and push the brain. Don't stop to ask.
 
-- **Stage only this session's files,** by explicit path, never with `git add -A` or `.`. Commit them with a message that names the handoff.
+- **Stage only this session's files,** by explicit path, never with `git add -A` or `.`. Commit them with the subject `<slug>: handoff-NNN, <focus>`, or `brain: <what changed>` when the session touched no product, and a short body if the subject doesn't say enough.
 - **Another session may have the brain open** (its uncommitted files show in `git status`). Leave its files alone and commit only your own paths (`git commit -- <paths>`). Hold the push until that session has committed, then push, which carries its commit too. Say in the summary that the push is waiting, and on what.
-- **If the push is refused** because the remote moved, pull with `--rebase` and push again. Never force.
+- **If the push is refused** because the remote moved, pull with `--rebase` and push again. If the rebase stops on a conflict, run `git rebase --abort`, stop, and show the user the conflicting files. Never force.
 - **If the brain isn't a git repository** or has no remote, say so in the summary instead.
 
 A code repo the session touched follows its own rules for commits.

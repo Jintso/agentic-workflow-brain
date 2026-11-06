@@ -6,6 +6,15 @@ You are resuming a working session. Load the brain, show the user where things s
 
 Every brain path in this command (`BRAIN-INDEX.md`, `products/...`, `templates/...`, `scripts/...`) is relative to the **brain root**, not to the working directory. The brain root is the directory that holds both `BRAIN-INDEX.md` and `products/`: either the working directory or one attached with `--add-dir`. Find it first. If no such directory is available, stop and tell the user to attach the brain with `claude --add-dir /path/to/brain`. If the brain's `CLAUDE.md` is not in context, read it from the brain root.
 
+## Step 0: Pull the Brain
+
+A brain kept in git may have been pushed to from another machine since the last session. Before reading anything, run `git -C <brain root> pull --ff-only`.
+
+- Pulled, or already up to date → continue.
+- Not a git repository, or no upstream → continue with the local copy, and say so in one line.
+- Uncommitted changes in the brain → another session has it open, or one ended without `/wrap-up`. Show `git status --short` in the briefing, and don't commit those files: they are not this session's. They don't stop the pull, since `--ff-only` refuses rather than overwrite a changed file.
+- The pull fails (offline, a refused overwrite, or the histories diverged) → continue with the local copy and tell the user why. Never merge, rebase, stash or reset the brain on your own.
+
 ## Step 1: Pick the Product
 
 Read `BRAIN-INDEX.md` and `products/README.md`, then apply the Product Resolution rule from `CLAUDE.md`:
