@@ -73,6 +73,7 @@ for c in "${cases[@]}"; do
     pass=$((pass + 1))
   else
     echo "FAIL   $c"
+    # shellcheck disable=SC2001  # a prefix on every line reads plainest in sed
     sed 's/^/       /' <<<"$d"
     fail=$((fail + 1))
   fi
