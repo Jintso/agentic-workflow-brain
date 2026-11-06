@@ -229,6 +229,18 @@ The commands are markdown files in `.claude/commands/`. Edit them freely:
 
 If you add top-level brain folders beyond `company/` and `products/`, add them to the `SCAN` list in `scripts/check-links.sh`.
 
+## Testing the Scripts
+
+`tests/run.sh` runs a case for each thing the three scripts were built or fixed to do, and exits 1 if any output differs from the one recorded:
+
+```bash
+tests/run.sh                    # every case
+tests/run.sh session-times      # one script's cases
+tests/run.sh --update           # record the output again, then review it with git diff
+```
+
+A case is `tests/<script>/<case>.sh`, which builds a small brain, repo or transcript in an empty temporary folder and runs the script on it, next to `<case>.expected`. Its first line says what it checks. The tests need only bash and what the scripts need, and `install.sh` doesn't copy them into the brain. When you change a script, add a case for the change. Run the script on a real brain too: a fixture holds only what someone thought of.
+
 ## Tips
 
 - **Don't skip `/wrap-up`.** It is what makes `/resume` useful.
