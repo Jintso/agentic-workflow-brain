@@ -1,0 +1,4 @@
+MISSING  @ROOT@/beta/CLAUDE.md:1  src/gone.rs
+NO-REPO  @ROOT@/gone: not a folder on this machine
+CLAUDE.md path check: 2 issue(s).
+exit 1

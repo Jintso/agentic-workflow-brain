@@ -1,0 +1,3 @@
+MISSING  @ROOT@/alpha/CLAUDE.local.md:4  src/notes.md
+CLAUDE.md path check: 1 issue(s).
+exit 1

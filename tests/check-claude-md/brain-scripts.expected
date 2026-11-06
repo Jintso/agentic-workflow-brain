@@ -1,0 +1,3 @@
+MISSING  @ROOT@/alpha/CLAUDE.md:4  scripts/gone.sh
+CLAUDE.md path check: 1 issue(s).
+exit 1

@@ -1,0 +1,4 @@
+MISSING  @ROOT@/alpha/CLAUDE.local.md:4  ~/old-brain
+MISSING  @ROOT@/alpha/CLAUDE.local.md:4  /nowhere/old-brain
+CLAUDE.md path check: 2 issue(s).
+exit 1
