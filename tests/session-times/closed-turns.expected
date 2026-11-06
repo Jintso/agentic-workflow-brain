@@ -1,0 +1,6 @@
+Start:    2026-11-06 10:00:00 UTC
+End:      2026-11-06 11:30:00 UTC
+Duration: 1 h 30 min
+Turns:    50 min inside 3 completed turns
+Handoff:  **Time:** 2026-11-06 10:00:00 UTC → 2026-11-06 11:30:00 UTC: 1 h 30 min, 50 min of it inside Claude's 3 turns (`scripts/session-times.sh`)
+exit 0

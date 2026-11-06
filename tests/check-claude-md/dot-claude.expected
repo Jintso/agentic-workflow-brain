@@ -1,0 +1,4 @@
+MISSING  @ROOT@/brain/CLAUDE.local.md:1  products/gone/
+MISSING  @ROOT@/alpha/.claude/CLAUDE.md:1  src/gone.rs
+CLAUDE.md path check: 2 issue(s).
+exit 1

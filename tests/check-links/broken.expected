@@ -1,0 +1,4 @@
+Brain link check: 5 files, 11 links
+BROKEN     products/alpha/README.md -> Gone.md
+1 issue(s) found.
+exit 1

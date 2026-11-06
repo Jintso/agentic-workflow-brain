@@ -1,0 +1,3 @@
+DANGLING @ROOT@/alpha/CLAUDE.md: symlink to ../shared/CLAUDE.md, which doesn't exist
+CLAUDE.md path check: 1 issue(s).
+exit 1

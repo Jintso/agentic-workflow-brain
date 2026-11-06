@@ -1,0 +1,4 @@
+No session id: pass one, or run this inside Claude Code (CLAUDE_CODE_SESSION_ID).
+exit 1
+No transcript for session gone under @ROOT@/.claude/projects.
+exit 1
