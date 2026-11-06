@@ -1,4 +1,4 @@
-Brain link check: 7 files, 16 links
+Brain link check: 7 files, 16 links, 0 anchors
 CROSS-PRODUCT  products/alpha/README.md -> ../beta/Execution-Plan.md
 1 issue(s) found.
 exit 1

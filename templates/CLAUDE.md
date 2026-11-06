@@ -93,6 +93,7 @@ products/<slug>/
 ### Links
 - Standard relative markdown links: `[Architecture](engineering/Architecture.md)`. They render in every editor and forge. No `[[wikilinks]]`.
 - Paths are relative to the file that contains them.
+- A link to a heading uses GitHub's anchor for it: lowercase, punctuation dropped, each space a hyphen (`Execution-Plan-Archive.md#phase-1-foundation`).
 - Every file except `BRAIN-INDEX.md` and `CLAUDE.md` starts with a parent line: `> Part of [Engineering](README.md)`.
 - Every folder has a `README.md` that links to everything in it.
 - Never link from one product's folder into another's. Shared material goes in `company/`.

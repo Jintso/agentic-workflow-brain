@@ -10,11 +10,12 @@ In a brain kept in git, commit the brain files this command wrote when it finish
 
 ## Step 1: Run the Link Checker
 
-Run the link checker (see *Brain Root*). It is deterministic and reports six kinds of issue:
+Run the link checker (see *Brain Root*). It is deterministic and reports seven kinds of issue:
 
 | Code | Meaning | Fix |
 |------|---------|-----|
 | `BROKEN` | A relative link points at a file that doesn't exist | Correct the path if it's a typo (suggest the closest match), create a stub if the topic is valid, remove the link if obsolete. Ask if ambiguous. |
+| `ANCHOR` | A link's `#anchor` matches no heading in its target file | Point it at the heading's current anchor, which may have moved to another file such as the archive. Ask if no heading fits. |
 | `WIKILINK` | A leftover `[[wikilink]]` | Convert to a relative markdown link to the matching file. If no file matches, ask. |
 | `NO-PARENT` | File lacks a `> Part of [...](...)` first line | Add it, pointing at the folder's `README.md` (or the product README for `Execution-Plan.md`). |
 | `ORPHAN` | No other file links to this one | Add it to its folder's `README.md`. |

@@ -1,0 +1,8 @@
+Brain link check: 5 files, 17 links, 8 anchors
+ANCHOR     products/alpha/README.md -> #nowhere
+ANCHOR     products/alpha/README.md -> Execution-Plan.md#phase-1
+ANCHOR     products/alpha/README.md -> Execution-Plan.md#phase-9-in-a-fence
+ANCHOR     products/alpha/README.md -> Execution-Plan.md#underlined
+BROKEN     products/alpha/README.md -> Gone.md
+5 issue(s) found.
+exit 1
