@@ -8,6 +8,25 @@ Versions are `major.minor.patch`:
 - **minor:** a command gains behaviour, or a template or a rule in `templates/CLAUDE.md` changes
 - **patch:** a fix that asks nothing of you
 
+## 2.1.0 — 2026-11-06
+
+A record for sessions that change the brain itself, and one rule for when the brain is committed.
+
+### Added
+
+- `/wrap-up` writes a handoff for brain-level work, in `company/handoffs/`: changes to `company/`, the templates, the brain's `CLAUDE.md`, its installed commands, its git setup, or repairs across products. It creates the folder on first use. A session that also worked on a product writes both handoffs
+- `/resume brain` briefs from the brain's latest handoff, and the product list shows it
+- `/resume` reports commits that a session left unpushed
+- `/sync` checks the brain's handoff chain
+
+### Changed
+
+- Every command that writes the brain commits the files it wrote when it finishes, and only `/wrap-up` pushes, once at the end of the session. Before, the rule said only "in the same session", and some commands committed and pushed at once while others waited for `/wrap-up`
+
+### Upgrade
+
+- Merge three lines of `templates/CLAUDE.md` into your brain's `CLAUDE.md`: *Session Protocol*, step 2; *The Brain in Git*, the first bullet; *Where Things Are*, the `company/README.md` line. The installer shows them with `git diff`. The commands follow the new rule without the merge
+
 ## 2.0.0 — 2026-11-06
 
 The multi-product brain, rebuilt from 1.0.0 on 2026-09-25 and released for the first time. One brain holds every product of an organisation, each in `products/<slug>/`, and a product session starts in its code repo with the brain attached.

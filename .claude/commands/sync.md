@@ -6,6 +6,8 @@ You are auditing the whole brain for structural and content issues and fixing th
 
 Every brain path in this command (`BRAIN-INDEX.md`, `products/...`, `templates/...`, `scripts/...`) is relative to the **brain root**, not to the working directory. The brain root is the directory that holds both `BRAIN-INDEX.md` and `products/`: either the working directory or one attached with `--add-dir`. Find it first. If no such directory is available, stop and tell the user to attach the brain with `claude --add-dir /path/to/brain`. If the brain's `CLAUDE.md` is not in context, read it from the brain root. Run the link checker as `<brain root>/scripts/check-links.sh <brain root>`.
 
+In a brain kept in git, commit the brain files this command wrote when it finishes, and only those: stage them by explicit path, never with `git add -A` or `.`. The subject is `<slug>: /<command>, <what changed>`, or `brain: /<command>, <what changed>` when the change isn't one product's. Don't push: the session's `/wrap-up` pushes once, at its end. A code repository follows its own rules.
+
 ## Step 1: Run the Link Checker
 
 Run the link checker (see *Brain Root*). It is deterministic and reports five kinds of issue:
@@ -65,7 +67,7 @@ Files with fewer than three lines of real content, excluding the parent line and
 **Fix:** flag them and ask whether to fill in or remove.
 
 ### Handoff chain integrity
-Handoffs are numbered sequentially per product with no gaps, and the latest one reflects the actual state.
+Handoffs are numbered sequentially per product with no gaps, and the latest one reflects the actual state. The same holds for the brain's own handoffs in `company/handoffs/`, each listed in `company/handoffs/README.md`, which `company/README.md` links.
 **Fix:** flag gaps. Never generate missing handoffs.
 
 ## Output Format

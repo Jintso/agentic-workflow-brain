@@ -10,6 +10,7 @@ Every brain path in this command (`BRAIN-INDEX.md`, `products/...`, `templates/.
 
 Review this conversation. Identify:
 - Which product(s) were worked on. Usually one. If several, repeat Steps 2–4 for each.
+- Brain-level work: changes no product owns, such as `company/`, `templates/`, the brain's `CLAUDE.md`, its installed commands and scripts, its git or GitHub setup, or repairs across several products. The status lines Step 2 replaces don't count. If there was any, Step 3 writes the brain's handoff as well.
 - Files created or modified, in the brain and in code
 - Decisions made and their rationale
 - Problems encountered and how they were solved
@@ -92,9 +93,15 @@ Brain files get a relative link. Code files get backticks, no link.
 **Suggested command:** `/resume <slug>`
 ```
 
+### The Brain's Handoff
+
+If the session did brain-level work (Step 1), also write `company/handoffs/handoff-NNN.md`, numbered on its own from the highest file there, from the same template and with the same **Time:** line. It holds only the brain-level work: a product's work stays in that product's handoff, so a session that did both writes both. The brain has no execution plan or status lines, so Step 2 doesn't apply to it. Link the brain files outside `products/`, and name a product's files in backticks, so the record still holds after a product moves out of the brain. Its suggested command is `/resume brain`.
+
+The first time, create `company/handoffs/README.md`: the parent line `> Part of [Company](../README.md)`, a line saying it holds the handoffs of sessions that changed the brain itself rather than a product, and an *Index*. Add `- [Handoffs](handoffs/README.md) — sessions that changed the brain itself, not a product` to the *Contents* of `company/README.md`.
+
 ## Step 4: Update the Handoffs Index
 
-Add to the *Index* list in `products/<slug>/handoffs/README.md`:
+Add to the *Index* list in `products/<slug>/handoffs/README.md`, and for the brain's handoff in `company/handoffs/README.md`:
 ```markdown
 - [handoff-NNN](handoff-NNN.md) — YYYY-MM-DD — one-line summary
 ```
@@ -105,9 +112,10 @@ Run the link checker (see *Brain Root*). Fix everything it reports before finish
 
 ## Step 6: Commit and Push
 
-Running `/wrap-up` is the user's go-ahead to commit and push the brain. Don't stop to ask.
+Running `/wrap-up` is the user's go-ahead to commit and push the brain. Don't stop to ask. It is the only command that pushes: the others commit the files they wrote and leave the push to this step.
 
-- **Stage only this session's files,** by explicit path, never with `git add -A` or `.`. Commit them with the subject `<slug>: handoff-NNN, <focus>`, or `brain: <what changed>` when the session touched no product, and a short body if the subject doesn't say enough.
+- **Stage only this session's files,** by explicit path, never with `git add -A` or `.`. Commit them with the subject `<slug>: handoff-NNN, <focus>`, or `brain: handoff-NNN, <focus>` when the session changed no product, and a short body if the subject doesn't say enough. A session that wrote both handoffs keeps the product's subject and names the brain's handoff in the body.
+- **Earlier commits go out with yours.** Commands run in this session have committed their own files already, and `git log --oneline @{u}..` lists every commit the push will carry. A commit no command of this session made comes from another session on this machine, still open or ended without `/wrap-up`. It is a whole command's work, so it goes out too; name it in the summary.
 - **Another session may have the brain open** (its uncommitted files show in `git status`). Leave its files alone and commit only your own paths (`git commit -- <paths>`). Hold the push until that session has committed, then push, which carries its commit too. Say in the summary that the push is waiting, and on what.
 - **If the push is refused** because the remote moved, pull with `--rebase` and push again. If the rebase stops on a conflict, run `git rebase --abort`, stop, and show the user the conflicting files. Never force.
 - **If the brain isn't a git repository** or has no remote, say so in the summary instead.
@@ -119,10 +127,10 @@ A code repo the session touched follows its own rules for commits.
 Show the user:
 1. Product(s) touched and the number of brain files created/modified
 2. Execution plan changes (steps completed, status changes)
-3. Handoff file path
-4. The brain commit, and whether it is pushed
+3. Handoff file path, and the brain's if Step 3 wrote one
+4. The brain commits the push carried, and whether they are pushed
 5. Top recommendation for next session
-6. "Your brain is updated. Run `/resume <slug>` next time to pick up where we left off."
+6. "Your brain is updated. Run `/resume <slug>` next time to pick up where we left off." After a session that changed only the brain, the command is `/resume brain`.
 
 ## Important Behaviors
 
@@ -130,4 +138,4 @@ Show the user:
 - **Never skip the execution plan update.** It is what makes `/resume` work.
 - **Write for a reader who has never seen this conversation.**
 - **Short or exploratory session?** Still write a handoff. Even a brief one keeps the chain intact.
-- **Brain-only maintenance session that touched no product?** Say so, skip the handoff, still run the link checker, then commit and push.
+- **A session that changed only the brain?** Say so, write the brain's handoff (Step 3), skip Step 2, and still run the link checker, then commit and push.

@@ -6,6 +6,8 @@ You are creating an agile-style sprint plan from the current state of the brain.
 
 Every brain path in this command (`BRAIN-INDEX.md`, `products/...`, `templates/...`, `scripts/...`) is relative to the **brain root**, not to the working directory. The brain root is the directory that holds both `BRAIN-INDEX.md` and `products/`: either the working directory or one attached with `--add-dir`. Find it first. If no such directory is available, stop and tell the user to attach the brain with `claude --add-dir /path/to/brain`. If the brain's `CLAUDE.md` is not in context, read it from the brain root. Run the link checker as `<brain root>/scripts/check-links.sh <brain root>`.
 
+In a brain kept in git, commit the brain files this command wrote when it finishes, and only those: stage them by explicit path, never with `git add -A` or `.`. The subject is `<slug>: /<command>, <what changed>`, or `brain: /<command>, <what changed>` when the change isn't one product's. Don't push: the session's `/wrap-up` pushes once, at its end. A code repository follows its own rules.
+
 ## Input
 
 - `/sprint` → the resolved product (Product Resolution rule in `CLAUDE.md`)
