@@ -61,3 +61,31 @@ rec() {
     *)          echo "rec: unknown kind $1" >&2; return 1 ;;
   esac >> "$f"
 }
+
+# tool <version>: a small copy of the tool in tool/, a git repo that gets a
+# commit and the tag v<version> per call. The first call copies install.sh and
+# gives it one command, one script and two templates; a case changes them
+# between calls.
+tool() {
+  if [ ! -d tool ]; then
+    mkdir -p tool/.claude/commands tool/scripts tool/templates
+    cp "$SCRIPTS/../install.sh" tool/
+    echo '# /resume' > tool/.claude/commands/resume.md
+    printf '#!/bin/sh\necho checked\n' > tool/scripts/check-links.sh
+    printf '# CLAUDE.md\n\n[PLACEHOLDER]\n' > tool/templates/CLAUDE.md
+    printf '# Handoff\n' > tool/templates/Handoff-Template.md
+    git -c init.defaultBranch=main init -q tool
+  fi
+  echo "$1" > tool/VERSION
+  git -C tool add -A
+  git -C tool -c user.name=Test -c user.email=test@example.com commit -q -m "$1"
+  git -C tool -c user.name=Test -c user.email=test@example.com tag -a "v$1" -m "$1"
+}
+
+# installer [<brain>]: run tool/install.sh on <brain>, by default brain/, then
+# print its exit status.
+installer() {
+  local status=0
+  tool/install.sh "${1:-brain}" 2>&1 || status=$?
+  echo "exit $status"
+}
