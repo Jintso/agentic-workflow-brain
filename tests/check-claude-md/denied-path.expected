@@ -1,0 +1,4 @@
+MISSING  @ROOT@/alpha/CLAUDE.md:3  src/legacy/
+MISSING  @ROOT@/alpha/CLAUDE.md:4  ./file
+CLAUDE.md path check: 2 issue(s).
+exit 1
